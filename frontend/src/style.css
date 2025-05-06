@@ -1,0 +1,87 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #eaf2fb;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.container {
+  background: white;
+  padding: 4rem;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 0 25px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-toggle {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.form-toggle button {
+  flex: 1;
+  padding: 1.5rem;
+  font-size: 2rem;
+  border: none;
+  background: #dbe9fd;
+  color: #0d47a1;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 10px;
+  margin: 0 0.5rem;
+}
+
+.form-toggle button.active {
+  background: #0d47a1;
+  color: white;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+input {
+  padding: 1.5rem;
+  margin: 1rem 0;
+  font-size: 1.8rem;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+}
+
+input::placeholder {
+  color: #999;
+  font-size: 1.6rem;
+}
+
+button[type="submit"] {
+  padding: 1.5rem;
+  font-size: 2rem;
+  background-color: #0d47a1;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  margin-top: 2rem;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.error {
+  color: red;
+  font-size: 1.4rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
