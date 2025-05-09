@@ -25,7 +25,7 @@ public class User {
     @Column(name = "fullname")
     private String fullName;
 
-    @Column
+    @Column(name="role")
     private String role;
 
     @Column(name = "created_at")

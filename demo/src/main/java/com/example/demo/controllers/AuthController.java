@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api")
 public class AuthController {
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
@@ -31,16 +31,19 @@ public class AuthController {
         this.jwtUtil = jwtUtil;
     }
    @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request)
+    public ResponseEntity<Map> register(@Valid @RequestBody RegisterRequest request)
    {
        if (userRepo.existsByUsername(request.getUsername())) {
-           return ResponseEntity.status(HttpStatus.CONFLICT)
-                   .body("Username already exists");
+          return ResponseEntity.status(HttpStatus.CONFLICT)
+                  .body(Map.of("status", HttpStatus.CONFLICT.value(),
+                          "message", "Користувач вже зареєстрований"));
+
        }
 
        if (userRepo.existsByEmail(request.getEmail())) {
            return ResponseEntity.status(HttpStatus.CONFLICT)
-                   .body("Email already registered");
+                   .body(Map.of("status", HttpStatus.CONFLICT.value(),
+                           "message", "Пошта вже зареєстрована"));
        }
        User user = new User();
        user.setEmail(request.getEmail());
@@ -52,26 +55,33 @@ public class AuthController {
 
        userRepo.save(user);
 
-       return ResponseEntity.ok("Користувач зареєстрований!");
+       return ResponseEntity.ok(Map.of("status", HttpStatus.OK.value(),
+               "message", "User was registered"));
    }
 
    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request)
+    public ResponseEntity<Map> login(@RequestBody AuthRequest request)
    {
        Optional<User> optionalUser = userRepo.findByEmail(request.getEmail());
 
        if (optionalUser.isEmpty()) {
            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                   .body(Map.of("error", "Користувача з таким email не знайдено"));
+                   .body(Map.of("status", HttpStatus.NOT_FOUND.value(),
+                           "error", "Користувача з таким email не знайдено"));
        }
        User user = optionalUser.get();
 
        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                   .body(Map.of("error", "Невірний пароль"));
+                   .body(Map.of("status", HttpStatus.UNAUTHORIZED.value(),
+                           "error", "Невірний пароль"));
        }
 
-       String token = jwtUtil.generateToken(user.getUsername());
-       return ResponseEntity.ok(new AuthResponse(token));
+       String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+
+       return ResponseEntity.status(HttpStatus.OK)
+               .body(Map.of("status", HttpStatus.OK.value(),
+                        "message", "Шо ты, здарова заебал",
+                        "token", new AuthResponse(token).getToken()));
    }
 }
