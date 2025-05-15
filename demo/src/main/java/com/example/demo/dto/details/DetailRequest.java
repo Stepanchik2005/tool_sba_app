@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.details;
 
 import lombok.Data;
 
@@ -8,4 +8,5 @@ public class DetailRequest {
     private String number;
     private String orderNumber;
     private String shape;
+    private String type;
 }

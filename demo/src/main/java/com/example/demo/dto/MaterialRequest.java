@@ -12,5 +12,8 @@ public class MaterialRequest {
     private String hardness;
 
     @NotBlank(message = "Group_iso is required")
-    private String group_iso;
+    private String groupIso;
+
+    @NotBlank(message = "hardnessSpan is required")
+    private String hardnessSpan;
 }

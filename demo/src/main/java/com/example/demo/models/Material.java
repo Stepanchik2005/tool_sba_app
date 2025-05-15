@@ -17,7 +17,10 @@ public class Material {
     @Column(nullable = false)
     private String hardness;
 
-    @Column(name = "group_ISO", nullable = false)
-    private String group_iso;
+    @Column(name = "group_iso", nullable = false)
+    private String groupIso;
+
+    @Column(name = "hardness_span", nullable = false)
+    private String hardnessSpan;
 
 }

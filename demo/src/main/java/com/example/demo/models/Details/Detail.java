@@ -1,5 +1,6 @@
-package com.example.demo.models;
+package com.example.demo.models.Details;
 
+import com.example.demo.models.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -26,4 +27,6 @@ public class Detail {
 
     @Column
     private String shape;
+
+    private String type;
 }

@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.example.demo.models.Details;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -16,7 +16,4 @@ public class DetailAttributes {
 
     @Column
     private String unit;
-
-    @Column
-    private String shape;
 }

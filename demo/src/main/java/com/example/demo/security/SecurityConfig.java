@@ -29,10 +29,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())// ✅ сучасний синтаксис
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/register", "/api/login").permitAll()
-                        .requestMatchers("/attributes").hasRole("ADMIN")
+                        .requestMatchers("/api/detail_attributes/create").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // 🧠 Ось це!
+         .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -43,11 +43,17 @@ public class SecurityConfig {
     }
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
+
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:8080"));
+        config.setAllowedOrigins(List.of(
+                "http://localhost:8080",
+                "http://100.113.68.44" // Tailscale IP фронта
+        )); // 🔥 Це обов'язково!
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
+
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

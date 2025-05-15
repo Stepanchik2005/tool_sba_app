@@ -15,7 +15,7 @@
     import java.util.Collections;
 
     @Component
-    public class JwtFilter extends OncePerRequestFilter {
+    public class    JwtFilter extends OncePerRequestFilter {
 
         private final JwtUtil jwtUtil;
 
@@ -28,6 +28,7 @@
                                         HttpServletResponse response,
                                         FilterChain filterChain)
                 throws ServletException, IOException {
+            System.out.println("Фільтр запущено: " + request.getMethod() + " " + request.getRequestURI());
 
             if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
                 response.setStatus(HttpServletResponse.SC_OK); // 👈 пропускаем preflight

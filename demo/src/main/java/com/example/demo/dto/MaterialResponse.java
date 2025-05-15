@@ -9,6 +9,7 @@ import lombok.Data;
 public class MaterialResponse {
     private Long id;
     private String brand;
-    private String type;
-    private String group_iso;
+    private String hardness;
+    private String groupIso;
+    private String hardnessSpan;
 }
