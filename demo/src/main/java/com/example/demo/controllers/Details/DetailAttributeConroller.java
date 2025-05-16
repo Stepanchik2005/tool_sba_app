@@ -1,6 +1,6 @@
-package com.example.demo.controllers;
+package com.example.demo.controllers.Details;
 
-import com.example.demo.dto.details.DetailAttributeRequest;
+import com.example.demo.dto.detail.DetailAttributeRequest;
 import com.example.demo.models.Details.DetailAttributes;
 import com.example.demo.models.Details.ShapeAttributeMapping;
 import com.example.demo.repositories.Details.DetailAttributeRepository;

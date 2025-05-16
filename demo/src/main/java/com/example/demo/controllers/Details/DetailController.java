@@ -1,6 +1,6 @@
-package com.example.demo.controllers;
+package com.example.demo.controllers.Details;
 
-import com.example.demo.dto.details.*;
+import com.example.demo.dto.detail.*;
 import com.example.demo.models.Details.*;
 import com.example.demo.models.User;
 import com.example.demo.repositories.Details.*;
@@ -89,43 +89,6 @@ public class DetailController {
         ));
     }
 
-
-//    @GetMapping("details/{id}")
-//    public ResponseEntity<?> getDetail(@PathVariable Long id, Authentication authentication)
-//    {
-//        String username = authentication.getName();
-//        User user = userRepo.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
-//
-//        Detail detail = detailRepo.findById(id)
-//                .orElseThrow(() -> new RuntimeException("Detail not found"));
-//
-//
-//        List<DetailAttributeValues> attributeValues = attributeValueRepo.findByDetail(detail);
-//
-//        List<DetailAttributeValueDTO> values = new ArrayList<>();
-//
-//        for (DetailAttributeValues dav : attributeValues) {
-//            String attributeName = dav.getAttribute().getName();
-//            String attributeUnit = dav.getAttribute().getUnit();
-//            String attributeValue = dav.getValue();
-//
-//            if (attributeName != null && !attributeName.isEmpty()
-//                    && attributeUnit != null && !attributeUnit.isEmpty()) {
-//
-//                DetailAttributeValueDTO value = new DetailAttributeValueDTO(
-//                        attributeName, attributeValue, attributeUnit
-//                );
-//                values.add(value);
-//            }
-//        }
-//
-//        DetailWithAttributesResponse response = new DetailWithAttributesResponse(detail.getId(), detail.getName(),
-//                detail.getNumber(), detail.getOrderNumber(), detail.getShape(),values);
-//
-//        return ResponseEntity.ok(Map.of("status", "OK",
-//                "message", "Successful",
-//                "data", response));
-//    }
 
     @GetMapping("/shapes")
     public ResponseEntity<?> getAllShapes() {

@@ -1,19 +1,15 @@
 package com.example.demo.controllers;
 
 
-import com.example.demo.dto.MaterialRequest;
-import com.example.demo.dto.MaterialResponse;
-import com.example.demo.models.Details.DetailAttributes;
+import com.example.demo.dto.material.MaterialRequest;
+import com.example.demo.dto.material.MaterialResponse;
 import com.example.demo.models.Material;
-import com.example.demo.models.User;
 import com.example.demo.repositories.MaterialRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

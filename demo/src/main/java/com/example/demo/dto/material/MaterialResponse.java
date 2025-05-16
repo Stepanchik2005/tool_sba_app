@@ -1,6 +1,5 @@
-package com.example.demo.dto;
+package com.example.demo.dto.material;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

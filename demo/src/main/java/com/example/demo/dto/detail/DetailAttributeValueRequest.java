@@ -1,4 +1,4 @@
-package com.example.demo.dto.details;
+package com.example.demo.dto.detail;
 
 import lombok.Data;
 
@@ -6,5 +6,4 @@ import lombok.Data;
 public class DetailAttributeValueRequest {
     private Long attributeId;
     private String value;
-
 }

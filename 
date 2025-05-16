@@ -1,0 +1,23 @@
+[33mcommit a0eb1331cfb41de14262f5c64e508285d2bec7bf[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Stepan <bodnar2005s@gmail.com>
+Date:   Thu May 15 14:38:41 2025 +0300
+
+    Detail and material (updated 1.1)
+
+[33mcommit 1296d5f902a4fc3d1625a1f07a87f50f81d5115e[m
+Author: Stepan <bodnar2005s@gmail.com>
+Date:   Fri May 9 22:01:37 2025 +0300
+
+    Material and details
+
+[33mcommit af5f721579a789b6ea322e03ea1ce93e9cfad8ac[m
+Author: Stepan <bodnar2005s@gmail.com>
+Date:   Wed May 7 18:09:28 2025 +0300
+
+    back auth API
+
+[33mcommit 2451e9d7a97cc08d654b14e48fbbdf5a11ecccb1[m
+Author: Stepan <bodnar2005s@gmail.com>
+Date:   Mon May 5 18:07:37 2025 +0300
+
+    Initial commit
