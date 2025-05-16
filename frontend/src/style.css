@@ -5,40 +5,65 @@ body {
   background: #eaf2fb;
   display: flex;
   justify-content: center;
+<<<<<<< HEAD
   align-items: center;
   height: 100vh;
+=======
+  align-items: flex-start;
+  min-height: 100vh;
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
 }
 
 .container {
   background: white;
+<<<<<<< HEAD
   padding: 4rem;
+=======
+  padding: 2rem 4rem;
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
   border-radius: 20px;
   width: 90%;
   max-width: 800px;
   box-shadow: 0 0 25px rgba(0,0,0,0.15);
+<<<<<<< HEAD
   display: flex;
   flex-direction: column;
   align-items: center;
+=======
+  margin-top: 3rem;
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
 }
 
 .form-toggle {
   display: flex;
   justify-content: space-between;
   margin-bottom: 2rem;
+<<<<<<< HEAD
   width: 100%;
+=======
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
 }
 
 .form-toggle button {
   flex: 1;
+<<<<<<< HEAD
   padding: 1.5rem;
   font-size: 2rem;
+=======
+  padding: 1.2rem;
+  font-size: 1.2rem;
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
   border: none;
   background: #dbe9fd;
   color: #0d47a1;
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s;
+<<<<<<< HEAD
   border-radius: 10px;
+=======
+  border-radius: 8px;
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
   margin: 0 0.5rem;
 }
 
@@ -50,6 +75,7 @@ body {
 .form {
   display: flex;
   flex-direction: column;
+<<<<<<< HEAD
   width: 100%;
 }
 
@@ -59,11 +85,23 @@ input {
   font-size: 1.8rem;
   border: 2px solid #ccc;
   border-radius: 10px;
+=======
+  gap: 1rem;
+}
+
+input,
+select {
+  padding: 1rem;
+  font-size: 1rem;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
   outline: none;
 }
 
 input::placeholder {
   color: #999;
+<<<<<<< HEAD
   font-size: 1.6rem;
 }
 
@@ -77,11 +115,55 @@ button[type="submit"] {
   margin-top: 2rem;
   cursor: pointer;
   font-weight: bold;
+=======
+}
+
+button[type="submit"],
+button[type="button"],
+button {
+  padding: 1rem;
+  font-size: 1rem;
+  background-color: #0d47a1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #094190;
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
 }
 
 .error {
   color: red;
+<<<<<<< HEAD
   font-size: 1.4rem;
   margin-top: -0.5rem;
   margin-bottom: 1rem;
 }
+=======
+  font-size: 0.9rem;
+}
+
+.success {
+  color: green;
+  font-size: 0.9rem;
+}
+
+.material-info {
+  background-color: #f0f4ff;
+  border-left: 5px solid #0d47a1;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
+
+
+
+
+
+
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))

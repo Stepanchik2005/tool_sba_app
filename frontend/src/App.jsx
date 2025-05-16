@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+<<<<<<< HEAD
 import './style.css';
 import SHA256 from 'crypto-js/sha256';
 
@@ -112,6 +113,21 @@ function App() {
         {errors.confirmPassword && <div className="error">{errors.confirmPassword}</div>}
         <button type="submit">{isLogin ? 'Увійти' : 'Зареєструватися'}</button>
       </form>
+=======
+import LoginForm from './components/LoginForm';
+import Menu from './components/Menu';
+
+function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  return (
+    <div className="container">
+      {isLoggedIn ? (
+        <Menu />
+      ) : (
+        <LoginForm onLogin={() => setIsLoggedIn(true)} />
+      )}
+>>>>>>> 0794aad (Обновленный фронт(материал, деталь, станки))
     </div>
   );
 }
