@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import AddMaterialForm from "./AddMaterialForm";
 
-const S_URL = "http://100.104.181.58:8080"; // 🔧 відносний шлях
-
+//const S_URL = "http://100.104.181.58:8080"; // 🔧 відносний шлях
+const S_URL = "http://localhost:8080";
 function MaterialForm() {
   const [materials, setMaterials] = useState([]);
   const [selected, setSelected] = useState("");
@@ -11,10 +11,10 @@ function MaterialForm() {
     groupIso: "",
     hardnessMin: "",
     hardnessMax: "",
-    hardness: ""
+    hardness: "",
   });
   const [showAddForm, setShowAddForm] = useState(false);
-  
+
   const fetchMaterials = () => {
     fetch(`${S_URL}/api/material/brands`, {
       headers: {
@@ -34,11 +34,14 @@ function MaterialForm() {
 
   useEffect(() => {
     if (selected) {
-      fetch(`${S_URL}/api/material/by-brand?name=${encodeURIComponent(selected)}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
+      fetch(
+        `${S_URL}/api/material/by-brand?name=${encodeURIComponent(selected)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      )
         .then((res) => {
           if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
           return res.json();
@@ -54,15 +57,16 @@ function MaterialForm() {
           };
           setForm(fixed);
         })
-        .catch((err) =>
-          console.error("Помилка завантаження матеріалу:", err)
-        );
+        .catch((err) => console.error("Помилка завантаження матеріалу:", err));
     }
   }, [selected]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: name === "hardness" ? Number(value) : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "hardness" ? Number(value) : value,
+    }));
   };
 
   const handleSave = () => {
@@ -92,7 +96,13 @@ function MaterialForm() {
         placeholder="Введіть назву (наприклад, Сталь)"
       />
       {searchTerm && (
-        <div style={{ border: "1px solid #ccc", maxHeight: "100px", overflowY: "auto" }}>
+        <div
+          style={{
+            border: "1px solid #ccc",
+            maxHeight: "100px",
+            overflowY: "auto",
+          }}
+        >
           {filteredMaterials.map((brand, i) => (
             <div
               key={i}
@@ -159,7 +169,9 @@ function MaterialForm() {
       />
 
       <button onClick={handleSave}>💾 Зберегти вибраний матеріал</button>
-      <button onClick={() => setShowAddForm(true)}>➕ Додати новий матеріал</button>
+      <button onClick={() => setShowAddForm(true)}>
+        ➕ Додати новий матеріал
+      </button>
     </div>
   );
 }

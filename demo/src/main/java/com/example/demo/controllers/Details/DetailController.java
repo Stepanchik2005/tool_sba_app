@@ -1,5 +1,6 @@
 package com.example.demo.controllers.Details;
 
+import com.example.demo.dto.detail.DetailHistoryDTO;
 import com.example.demo.dto.detail.*;
 import com.example.demo.models.Details.*;
 import com.example.demo.models.User;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/details")
@@ -83,7 +85,7 @@ public class DetailController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
-                "status", 201,
+                "status", HttpStatus.CREATED.value(),
                 "message", "Деталь и атрибуты успешно сохранены",
                 "detailId", savedDetail.getId()
         ));
@@ -141,6 +143,52 @@ public class DetailController {
                 "message", "Связка форма-тип добавлена",
                 "shape", request.getShape(),
                 "type", request.getType()
+        ));
+    }
+
+
+    @GetMapping("/history")
+    public ResponseEntity<?> getMyDetails(Authentication auth)
+    {
+        User user = userRepo.findByUsername(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // получаем все значения с деталями и аттрибутами
+        List<DetailAttributeValues> raw = attributeValueRepo.findAllWithFullData(user.getId());
+
+        // группируем по Detail
+        Map<Detail, List<DetailAttributeValues>> grouped = raw.stream()
+                .collect(Collectors.groupingBy(DetailAttributeValues::getDetail));
+
+        // строим DTO
+        List<DetailHistoryDTO> result = grouped.entrySet().stream()
+                .map(entry -> {
+                    Detail d = entry.getKey();
+
+                    List<DetailHistoryDTO.AttributeValueDTO> attrs = entry.getValue().stream()
+                            .map(v -> new DetailHistoryDTO.AttributeValueDTO(
+                                    v.getAttribute().getName(),
+                                    v.getAttribute().getUnit(),
+                                    v.getValue()
+                            ))
+                            .toList();
+
+                    return new DetailHistoryDTO(
+                            d.getId(),
+                            d.getNumber(),
+                            d.getName(),
+                            d.getOrderNumber(),
+                            d.getType(),
+                            d.getShape(),
+                            attrs
+                    );
+                })
+                .toList();
+
+        return ResponseEntity.ok(Map.of(
+                "status", 200,
+                "message", "Деталі з історії успішно завантажено",
+                "data", result
         ));
     }
 }

@@ -5,11 +5,11 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "processing_type_attributes")
-public class ProcessingTypeAttributes {
+@Table(name = "cooling_type")
+public class CoolingType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    private String unit;
 }

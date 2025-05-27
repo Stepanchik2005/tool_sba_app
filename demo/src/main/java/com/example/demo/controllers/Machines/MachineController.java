@@ -1,8 +1,10 @@
 package com.example.demo.controllers.Machines;
 
 
+import com.example.demo.dto.detail.DetailHistoryDTO;
 import com.example.demo.dto.detail.ShapeTypeRequest;
 import com.example.demo.dto.machine.MachineAttributeValuesRequest;
+import com.example.demo.dto.machine.MachineHistoryDTO;
 import com.example.demo.dto.machine.MachineTypeAttributesRequest;
 import com.example.demo.dto.machine.MachineWithAttributesRequest;
 import com.example.demo.models.Details.Detail;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/machines")
@@ -108,6 +111,43 @@ public class MachineController {
             ));
         }
     }
+    @GetMapping("/history")
+    public ResponseEntity<?> getMyMachines(Authentication auth)
+    {
+        User user = userRepo.findByUsername(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        List<MachineAttributeValues> values = machineAttributeValuesRepo.findAllWithFullData(user.getId());
+
+        Map<Machine, List<MachineAttributeValues>> map = values.stream().collect(Collectors.groupingBy(MachineAttributeValues::getMachine));
+
+        List<MachineHistoryDTO> result = map.entrySet().stream().map(entry -> {
+                    Machine machine = entry.getKey();
+
+                    List<MachineHistoryDTO.MachineAttributesDTO> attrs = entry.getValue().stream()
+                            .map(v -> new MachineHistoryDTO.MachineAttributesDTO(
+                                    v.getAttribute().getName(),
+                                    v.getAttribute().getUnit(),
+                                    v.getValue()
+                            ))
+                            .toList();
+                    return new MachineHistoryDTO(
+                            machine.getId(),
+                            machine.getInventoryNumber(),
+                            machine.getWorkshopNumber(),
+                            machine.getType(),
+                            machine.getModel(),
+                            machine.getChpkSystem(),
+                            attrs
+                    );
+                }
+                ).toList();
+
+        return ResponseEntity.ok(Map.of(
+                "status", 200,
+                "message", "Деталі з історії успішно завантажено",
+                "data", result
+        ));
+    }
 
 }

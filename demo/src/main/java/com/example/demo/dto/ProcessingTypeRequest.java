@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.models.ProcessingType;
 import lombok.Data;
 
 @Data

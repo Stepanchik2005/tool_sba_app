@@ -1,6 +1,6 @@
 package com.example.demo.repositories;
 
-import com.example.demo.models.ProcessingType;
+import com.example.demo.models.Process.ProcessingType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

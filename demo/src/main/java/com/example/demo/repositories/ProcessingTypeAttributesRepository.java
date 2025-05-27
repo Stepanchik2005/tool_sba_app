@@ -1,6 +1,6 @@
 package com.example.demo.repositories;
 
-import com.example.demo.models.ProcessingTypeAttributes;
+import com.example.demo.models.Process.ProcessingTypeAttributes;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

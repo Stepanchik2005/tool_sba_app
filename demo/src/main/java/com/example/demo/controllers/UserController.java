@@ -16,7 +16,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class UserController {
-    private UserRepository userRepo;
+    private final UserRepository userRepo;
 
     public UserController(UserRepository userRepo)
     {
@@ -24,9 +24,8 @@ public class UserController {
     }
 
     @GetMapping("/user/me")
-    public ResponseEntity<Map> getCurrentUser()
+    public ResponseEntity<Map> getCurrentUser(Authentication auth)
     {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getName())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
                     Map.of("status", 401, "message", "Unauthorized"));

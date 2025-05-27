@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.example.demo.models.Process;
 
 import jakarta.persistence.*;
 import lombok.Data;

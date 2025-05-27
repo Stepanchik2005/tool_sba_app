@@ -1,4 +1,4 @@
-package com.example.demo.models;
+package com.example.demo.models.Process;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,18 +12,18 @@ public class ProcessingTypeAttributeBindings {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "processing_type")
+    @JoinColumn(name = "processing_type_id")
     private ProcessingType processingType;
 
     @ManyToOne
-    @JoinColumn(name = "processing_type")
+    @JoinColumn(name = "processing_method_id")
     private ProcessingMethod processingMethod;
 
     @ManyToOne
-    @JoinColumn(name = "processing_type_attributes")
+    @JoinColumn(name = "attribute_id")
     private ProcessingTypeAttributes processingTypesAttributes;
 
     @Column(name = "is_required")
-    private boolean isRequired;
+    private Boolean isRequired;
 
 }

@@ -6,6 +6,6 @@ import lombok.Data;
 public class ProcessingTypeAttributeResponse {
     private Long id;
     private String name;
-    private boolean isRequired;
+    private Boolean isRequired;
 
 }

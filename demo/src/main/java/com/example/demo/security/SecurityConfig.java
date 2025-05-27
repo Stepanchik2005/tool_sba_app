@@ -46,7 +46,7 @@ public class SecurityConfig {
 
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
-                "http://localhost:8080",
+                "http://localhost:3005",
                 "http://100.113.68.44" // Tailscale IP фронта
         )); // 🔥 Це обов'язково!
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import SHA256 from "crypto-js/sha256";
 
-const S_URL = "http://100.104.181.58:8080";
+//const S_URL = "http://100.104.181.58:8080";
 
+const S_URL = "http://localhost:8080";
 function LoginForm({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
@@ -65,7 +66,7 @@ function LoginForm({ onLogin }) {
   };
 
   return (
-    <form className="form" onSubmit={handleSubmit}>
+    <form className="login-form" onSubmit={handleSubmit}>
       {!isLogin && (
         <input
           type="text"

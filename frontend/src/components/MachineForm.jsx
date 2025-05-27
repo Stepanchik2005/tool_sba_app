@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import MyMachines from "./MyMachines";
 
-const S_URL = "http://100.104.181.58:8080";
-
+//const S_URL = "http://100.104.181.58:8080";
+const S_URL = "http://localhost:8080";
 export default function MachineForm() {
   const [mode, setMode] = useState("main"); // "main" | "lathe" | "milling"
   const [showAttrForm, setShowAttrForm] = useState(false);
@@ -15,10 +16,11 @@ export default function MachineForm() {
     inventoryNumber: "",
     workshopNumber: "",
     model: "",
-    chpkSystem: ""
+    chpkSystem: "",
   });
 
-  const machineType = mode === "lathe" ? "LATHE" : mode === "milling" ? "MILLING" : "";
+  const machineType =
+    mode === "lathe" ? "LATHE" : mode === "milling" ? "MILLING" : "";
 
   useEffect(() => {
     if (mode === "lathe" || mode === "milling") {
@@ -69,15 +71,17 @@ export default function MachineForm() {
   };
 
   const handleSaveMachine = () => {
-    const attributesPayload = Object.values(attributeValues).map(({ attributeId, value }) => ({
-      attributeId,
-      value
-    }));
+    const attributesPayload = Object.values(attributeValues).map(
+      ({ attributeId, value }) => ({
+        attributeId,
+        value,
+      })
+    );
 
     const fullMachineData = {
       ...machineData,
       type: machineType,
-      attributes: attributesPayload
+      attributes: attributesPayload,
     };
 
     localStorage.setItem("selectedMachine", JSON.stringify(fullMachineData));
@@ -97,7 +101,7 @@ export default function MachineForm() {
           inventoryNumber: "",
           workshopNumber: "",
           model: "",
-          chpkSystem: ""
+          chpkSystem: "",
         });
         setAttributeValues({});
         setMode("main");
@@ -110,14 +114,21 @@ export default function MachineForm() {
       <div className="form">
         <h3>Додати атрибут для станка</h3>
         <button onClick={() => setMode("lathe")}>Додати токарний станок</button>
-        <button onClick={() => setMode("milling")}>Додати фрезерний станок</button>
+        <button onClick={() => setMode("milling")}>
+          Додати фрезерний станок
+        </button>
+        <button onClick={() => setMode("myMachines")}>Мої верстати</button>
       </div>
     );
   }
 
+  if (mode === "myMachines") return <MyMachines />;
+
   return (
     <div className="form">
-      <h3>{machineType === "LATHE" ? "Токарний станок" : "Фрезерний станок"}</h3>
+      <h3>
+        {machineType === "LATHE" ? "Токарний станок" : "Фрезерний станок"}
+      </h3>
 
       {!showAttrForm ? (
         <>
@@ -127,28 +138,45 @@ export default function MachineForm() {
             <input
               type="text"
               value={machineData.inventoryNumber}
-              onChange={(e) => setMachineData(prev => ({ ...prev, inventoryNumber: e.target.value }))}
+              onChange={(e) =>
+                setMachineData((prev) => ({
+                  ...prev,
+                  inventoryNumber: e.target.value,
+                }))
+              }
             />
 
             <label>Номер цеху</label>
             <input
               type="text"
               value={machineData.workshopNumber}
-              onChange={(e) => setMachineData(prev => ({ ...prev, workshopNumber: e.target.value }))}
+              onChange={(e) =>
+                setMachineData((prev) => ({
+                  ...prev,
+                  workshopNumber: e.target.value,
+                }))
+              }
             />
 
             <label>Модель</label>
             <input
               type="text"
               value={machineData.model}
-              onChange={(e) => setMachineData(prev => ({ ...prev, model: e.target.value }))}
+              onChange={(e) =>
+                setMachineData((prev) => ({ ...prev, model: e.target.value }))
+              }
             />
 
             <label>Система ЧПК</label>
             <input
               type="text"
               value={machineData.chpkSystem}
-              onChange={(e) => setMachineData(prev => ({ ...prev, chpkSystem: e.target.value }))}
+              onChange={(e) =>
+                setMachineData((prev) => ({
+                  ...prev,
+                  chpkSystem: e.target.value,
+                }))
+              }
             />
           </fieldset>
 
@@ -162,12 +190,12 @@ export default function MachineForm() {
                     value={attributeValues[attr.name]?.value || ""}
                     onChange={(e) => {
                       const value = e.target.value;
-                      setAttributeValues(prev => ({
+                      setAttributeValues((prev) => ({
                         ...prev,
                         [attr.name]: {
                           attributeId: attr.id,
-                          value
-                        }
+                          value,
+                        },
                       }));
                     }}
                   >
@@ -180,18 +208,20 @@ export default function MachineForm() {
                     value={attributeValues[attr.name]?.value || ""}
                     onChange={(e) => {
                       const value = e.target.value;
-                      setAttributeValues(prev => ({
+                      setAttributeValues((prev) => ({
                         ...prev,
                         [attr.name]: {
                           attributeId: attr.id,
-                          value
-                        }
+                          value,
+                        },
                       }));
                     }}
                   >
                     <option value="">Оберіть</option>
                     {attr.options.map((opt, j) => (
-                      <option key={j} value={opt}>{opt}</option>
+                      <option key={j} value={opt}>
+                        {opt}
+                      </option>
                     ))}
                   </select>
                 ) : (
@@ -200,12 +230,12 @@ export default function MachineForm() {
                     value={attributeValues[attr.name]?.value || ""}
                     onChange={(e) => {
                       const value = e.target.value;
-                      setAttributeValues(prev => ({
+                      setAttributeValues((prev) => ({
                         ...prev,
                         [attr.name]: {
                           attributeId: attr.id,
-                          value
-                        }
+                          value,
+                        },
                       }));
                     }}
                   />
@@ -215,7 +245,9 @@ export default function MachineForm() {
           </fieldset>
 
           <button onClick={handleSaveMachine}>💾 Зберегти станок</button>
-          <button onClick={() => setShowAttrForm(true)}>➕ Додати атрибут</button>
+          <button onClick={() => setShowAttrForm(true)}>
+            ➕ Додати атрибут
+          </button>
           <button onClick={() => setMode("main")}>Назад</button>
         </>
       ) : (
@@ -223,7 +255,10 @@ export default function MachineForm() {
           <h4>Додати атрибут</h4>
 
           <label>Input Type</label>
-          <select value={attrType} onChange={(e) => setAttrType(e.target.value)}>
+          <select
+            value={attrType}
+            onChange={(e) => setAttrType(e.target.value)}
+          >
             <option value="String">String</option>
             <option value="Boolean">Boolean</option>
             <option value="Select">Select</option>

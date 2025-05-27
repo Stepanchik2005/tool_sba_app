@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-const S_URL = "http://100.104.181.58:8080";
-
+//const S_URL = "http://100.104.181.58:8080";
+const S_URL = "http://localhost:8080";
 function AddMaterialForm({ onBack }) {
   const [form, setForm] = useState({
     brand: "",
     groupIso: "",
     hardnessMin: "",
     hardnessMax: "",
-    hardness: ""
+    hardness: "",
   });
   const [responseStatus, setResponseStatus] = useState(null);
 
@@ -20,17 +20,26 @@ function AddMaterialForm({ onBack }) {
     const hardness = Number(form.hardness);
 
     if (isNaN(min) || isNaN(max) || isNaN(hardness)) {
-      setResponseStatus({ status: "error", message: "Всі значення мають бути числами" });
+      setResponseStatus({
+        status: "error",
+        message: "Всі значення мають бути числами",
+      });
       return;
     }
 
     if (min < 0 || max < 0) {
-      setResponseStatus({ status: "error", message: "Твердість не може бути менше 0" });
+      setResponseStatus({
+        status: "error",
+        message: "Твердість не може бути менше 0",
+      });
       return;
     }
 
     if (min > max) {
-      setResponseStatus({ status: "error", message: "Мінімальна твердість більша за максимальну" });
+      setResponseStatus({
+        status: "error",
+        message: "Мінімальна твердість більша за максимальну",
+      });
       return;
     }
 
@@ -38,16 +47,16 @@ function AddMaterialForm({ onBack }) {
       brand: String(form.brand),
       groupIso: String(form.groupIso),
       hardnessSpan: `${min}-${max}`,
-      hardness: String(hardness)
+      hardness: String(hardness),
     };
 
     fetch(`${S_URL}/api/material/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     })
       .then(async (res) => {
         const contentType = res.headers.get("content-type");

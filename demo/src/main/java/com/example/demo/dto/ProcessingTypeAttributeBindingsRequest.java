@@ -5,8 +5,9 @@ import lombok.Data;
 @Data
 public class ProcessingTypeAttributeBindingsRequest {
     private Long typeId;
-    private String attributeName;
+    private Long attributeId;
+    private String name;
     private String unit;
-    private boolean isRequired;
+    private Boolean isRequired;
     private String methodName;
 }
