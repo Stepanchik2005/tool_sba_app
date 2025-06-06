@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
-
-const S_URL = "http://localhost:8080";
-
+import { S_URL } from "./constants";
 export default function ProcessingTreeForm({
   selectedCoolingType,
   selectedCoolingMethod,
@@ -16,6 +14,7 @@ export default function ProcessingTreeForm({
   const [attributeValues, setAttributeValues] = useState({});
   const [node, setLevelNode] = useState(null);
   const [levelIndex, setLevelIndex] = useState(null);
+  //const [allNodes, setAllNodes] = useState([]);
 
   // Отримуємо збережену деталь з localStorage
   const detail = details?.find((d) => d.id === parseInt(selectedDetail));
@@ -41,6 +40,7 @@ export default function ProcessingTreeForm({
       .then((data) => {
         const array = Object.values(data.data);
         setNodesByLevel([[...array]]);
+        // setAllNodes(array); // 💡 додаємо в загальний список
       })
       .catch((err) => alert("❌ Не вдалося завантажити дерево"));
   }, []);
@@ -57,6 +57,7 @@ export default function ProcessingTreeForm({
 
     if (node.leaf) {
       setSelectedTypeId?.(node.id);
+      //localStorage.setItem("selectedTypeURL", node.url);
       fetch(`${S_URL}/api/processing-type/children/attributes`, {
         method: "POST",
         headers: {
@@ -72,7 +73,7 @@ export default function ProcessingTreeForm({
             setAttributes(res.data.attributes);
           }
         })
-        .catch((err) => alert("❌ Не вдалося завантажити атрибути"));
+        .catch(() => alert("❌ Не вдалося завантажити атрибути"));
     } else {
       fetch(`${S_URL}/api/processing-type/children?parentId=${node.id}`, {
         method: "GET",
@@ -85,6 +86,7 @@ export default function ProcessingTreeForm({
         .then((data) => {
           newLevels.push(data.data);
           setNodesByLevel(newLevels);
+          //setAllNodes((prev) => [...prev, ...data.data]);
         })
         .catch((err) => alert("❌ Не вдалося завантажити дочірні вузли"));
     }
@@ -169,6 +171,8 @@ export default function ProcessingTreeForm({
                       setLevelNode(node);
                       setLevelIndex(levelIdx);
                       handleNodeClick(node, levelIdx);
+                      localStorage.setItem("selectedTypeId", node.id);
+                      localStorage.setItem("selectedNodeUrl", node.url); // якщо потрібно показувати картинку
                     }}
                     style={{
                       padding: "8px 12px",

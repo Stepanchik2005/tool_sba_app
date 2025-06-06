@@ -49,6 +49,7 @@ function MaterialForm() {
         .then((data) => {
           const material = data.data;
           const fixed = {
+            id: material.id,
             brand: material.brand,
             groupIso: material.groupIso,
             hardness: Number(material.hardness),

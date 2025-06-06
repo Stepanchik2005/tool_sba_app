@@ -3,6 +3,7 @@ import MaterialForm from "./MaterialForm";
 import DetailForm from "./DetailForm";
 import MachineForm from "./MachineForm";
 import ProcessingForm from "./ProcessingForm";
+import SetForm from "./SetForm"; // ✅ підключаємо нову форму
 
 import "../style.css";
 
@@ -65,6 +66,12 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
           >
             ⚙️ Тех. рішення
           </button>
+          <button
+            onClick={() => setSection("set")}
+            className={`tab-btn ${section === "set" ? "active" : ""}`}
+          >
+            🔗 Комплект
+          </button>
         </div>
 
         {/* Контент */}
@@ -81,6 +88,7 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
           {section === "details" && <DetailForm />}
           {section === "machines" && <MachineForm />}
           {section === "processing" && <ProcessingForm />}
+          {section === "set" && <SetForm />} {/* ✅ нова секція */}
         </div>
       </div>
     </div>

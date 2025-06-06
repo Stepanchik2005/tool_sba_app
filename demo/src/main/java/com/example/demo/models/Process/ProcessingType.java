@@ -2,12 +2,14 @@ package com.example.demo.models.Process;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "processing_type")
+@ToString(exclude = {"parent", "children"})
 public class ProcessingType {
 
     @Id

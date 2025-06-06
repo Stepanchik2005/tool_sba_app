@@ -34,6 +34,30 @@ export default function ProcessingForm() {
 
   const [userMethods, setUserMethods] = useState([]);
   const [selectedMethodId, setSelectedMethodId] = useState(null);
+
+  useEffect(() => {
+    const cached = localStorage.getItem("userDetailHistory");
+    if (cached) setDetails(JSON.parse(cached));
+
+    const cached_m = localStorage.getItem("userMachineHistory");
+    if (cached_m) setMachines(JSON.parse(cached_m));
+
+    const savedDetail = localStorage.getItem("selectedDetail");
+    if (savedDetail) setSelectedDetail(savedDetail);
+
+    const savedMethod = localStorage.getItem("selectedMethodId");
+    if (savedMethod) setSelectedMethodId(savedMethod);
+
+    const savedCoolingType = localStorage.getItem("selectedCoolingType");
+    if (savedCoolingType) setSelectedCoolingType(savedCoolingType);
+
+    const savedCoolingMethod = localStorage.getItem("selectedCoolingMethod");
+    if (savedCoolingMethod) setSelectedCoolingMethod(savedCoolingMethod);
+
+    const savedMachine = localStorage.getItem("selectedMachine");
+    if (savedMachine) setSelectedMachine(savedMachine);
+  }, []);
+
   // Load attributes
   useEffect(() => {
     if (mode === "attribute") {
@@ -82,18 +106,21 @@ export default function ProcessingForm() {
       .catch(() => alert("❌ Не вдалося завантажити методи охолодження"));
   }, []);
 
-  // История
-  useEffect(() => {
-    const cached = localStorage.getItem("userDetailHistory");
-    if (cached) {
-      setDetails(JSON.parse(cached));
-    }
-    const cached_m = localStorage.getItem("userMachineHistory");
-    if (cached_m) {
-      setMachines(JSON.parse(cached_m));
-      console.log(machines);
-    }
-  }, []);
+  // // История
+  // useEffect(() => {
+  //   const cached = localStorage.getItem("userDetailHistory");
+  //   if (cached) {
+  //     setDetails(JSON.parse(cached));
+  //   }
+  //   const cached_m = localStorage.getItem("userMachineHistory");
+  //   if (cached_m) {
+  //     setMachines(JSON.parse(cached_m));
+  //   }
+  //   const saved = localStorage.getItem("selectedDetail");
+  //   if (saved) {
+  //     setSelectedDetail(saved);
+  //   }
+  // }, []);
 
   const handleProcessingTypeSubmit = () => {
     fetch(`${S_URL}/api/processing-type/create`, {
@@ -214,9 +241,23 @@ export default function ProcessingForm() {
             onChange={(e) => {
               const newMethod = e.target.value;
               setSelectedMethodId(newMethod);
+
+              const selectedMethod = userMethods.find(
+                (m) => m.id.toString() === newMethod
+              );
+
+              if (selectedMethod) {
+                localStorage.setItem("selectedMethodId", selectedMethod.id);
+                localStorage.setItem(
+                  "selectedProcessingName",
+                  selectedMethod.name
+                );
+              }
+
               handleNodeClick(node, levelIndex, newMethod);
             }}
           >
+            <option value="">Оберіть метод</option>
             {userMethods.map((method, i) => (
               <option key={i} value={method.id}>
                 {method.name}
@@ -227,7 +268,10 @@ export default function ProcessingForm() {
             <label style={{ display: "block" }}>Тип охолодження</label>
             <select
               value={selectedCoolingType}
-              onChange={(e) => setSelectedCoolingType(e.target.value)}
+              onChange={(e) => {
+                setSelectedCoolingType(e.target.value);
+                localStorage.setItem("selectedCoolingType", e.target.value);
+              }}
             >
               <option value="">Оберіть тип</option>
               {coolingTypes.map((t) => (
@@ -242,7 +286,10 @@ export default function ProcessingForm() {
             <label style={{ display: "block" }}>Вид охолодження</label>
             <select
               value={selectedCoolingMethod}
-              onChange={(e) => setSelectedCoolingMethod(e.target.value)}
+              onChange={(e) => {
+                setSelectedCoolingMethod(e.target.value);
+                localStorage.setItem("selectedCoolingMethod", e.target.value);
+              }}
             >
               <option value="">Оберіть вид</option>
               {coolingMethods.map((m) => (
@@ -256,7 +303,21 @@ export default function ProcessingForm() {
             <label style={{ display: "block" }}>Деталь</label>
             <select
               value={selectedDetail}
-              onChange={(e) => setSelectedDetail(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSelectedDetail(value);
+
+                const selectedDetail = details.find(
+                  (d) => d.id.toString() === value
+                );
+                if (selectedDetail) {
+                  localStorage.setItem(
+                    "selectedDetailName",
+                    selectedDetail.name
+                  );
+                  localStorage.setItem("selectedDetail", selectedDetail.id);
+                }
+              }}
             >
               <option value="">Оберіть деталь</option>
               {details.map((m) => (
@@ -270,7 +331,10 @@ export default function ProcessingForm() {
             <label style={{ display: "block" }}>Верстати</label>
             <select
               value={selectedMachine}
-              onChange={(e) => setSelectedMachine(e.target.value)}
+              onChange={(e) => {
+                setSelectedMachine(e.target.value);
+                localStorage.setItem("selectedMachine", e.target.value);
+              }}
             >
               <option value="">Оберіть станок</option>
               {machines.map((m) => (
