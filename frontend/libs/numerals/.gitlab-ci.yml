@@ -1,0 +1,29 @@
+default:
+  image: node:20-alpine3.17
+
+stages:
+  - test
+  - publish
+
+unit-test-job:
+  stage: test
+  before_script:
+      - npm ci
+  script:
+    - npm run test
+
+publish-npm:
+  stage: publish
+  environment: production
+  cache: {}
+  variables:
+    SECURE_FILES_DOWNLOAD_PATH: "."
+  before_script:
+    - apk --no-cache --upgrade add bash curl
+    - curl --silent "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer" | bash
+    - npm ci
+  script:
+    - npm run build
+    - npm publish --verbose
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^release-.*/

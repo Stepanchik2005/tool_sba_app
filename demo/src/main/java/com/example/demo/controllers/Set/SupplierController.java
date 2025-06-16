@@ -71,21 +71,24 @@ public class SupplierController {
            ));
        }
 
-
         Supplier newSupplier = new Supplier();
         newSupplier.setEmail(request.email());
         newSupplier.setName(request.name());
         newSupplier.setUser(user);
-        if(request.mobile() != null)
-            newSupplier.setMobile(request.mobile());
-
+        newSupplier.setMobile(request.mobile());
+        newSupplier.setEdpou(request.edpou());
+        newSupplier.setAddress(request.address());
 
         Supplier saved =  supplierRepository.save(newSupplier);
 
+        SupplierResponse response = new SupplierResponse(
+                saved.getId(), saved.getEmail(), saved.getName(), saved.getMobile(), saved.getEdpou(),
+                saved.getAddress()
+        );
         return ResponseEntity.status(HttpStatus.OK).body(Map.of(
                 "status", HttpStatus.OK.value(),
                 "message", "Successfully added",
-                "data", saved
+                "data", response
         ));
     }
 
@@ -105,7 +108,8 @@ public class SupplierController {
         List<SupplierResponse> responses = suppliers.stream().map(
                 res -> {
                     SupplierResponse response = new SupplierResponse(
-                            res.getId(), res.getEmail(), res.getName(), res.getMobile()
+                            res.getId(), res.getEmail(), res.getName(), res.getMobile(), res.getEdpou(),
+                            res.getAddress()
                     );
                     return response;
                 }

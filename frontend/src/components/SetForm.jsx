@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { S_URL } from "./constants";
 import StarRating from "./StarRating";
-function SetForm({ mode = "view" }) {
+import StatementBuilder from "./StatementBuilder";
+
+function SetForm() {
   const [toolHolder, setToolHolder] = useState({
     name: "",
     marking: "",
@@ -27,7 +29,16 @@ function SetForm({ mode = "view" }) {
     supplierId: "",
     brandId: "",
   });
-  const [supplier, setSupplier] = useState({ name: "", email: "", mobile: "" });
+  const [supplier, setSupplier] = useState({
+    name: "",
+    edrpou: "",
+    address: "",
+    email: "",
+    mobile: "",
+  });
+  const [mode, setMode] = useState("view"); // "view" або "statements"
+  const [groupedStatements, setGroupedStatements] = useState({});
+
   const [brand, setBrand] = useState({ name: "" });
   const [allSuppliers, setAllSuppliers] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
@@ -42,10 +53,13 @@ function SetForm({ mode = "view" }) {
   const [ratings, setRatings] = useState({}); // id -> number
 
   const [disableDrafts, setDisableDrafts] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedSetItems, setSelectedSetItems] = useState({});
 
   const isAdmin = true; // TODO: замінити на реальну перевірку ролі
+  const hasAnySelected = Object.values(selectedSetItems).some((group) => {
+    return Object.values(group).some((v) => v === true);
+  });
 
   useEffect(() => {
     localStorage.setItem("setHistory", JSON.stringify(setHistory));
@@ -63,10 +77,31 @@ function SetForm({ mode = "view" }) {
 
   useEffect(() => {
     if (mode === "view") {
+      setIsLoading(true);
       const processingTypeId = localStorage.getItem("selectedTypeId");
       const processingMethodId = localStorage.getItem("selectedMethodId");
-      const material = JSON.parse(localStorage.getItem("selectedMaterial"));
-      const materialId = material.id;
+
+      let materialId = null;
+      const materialRaw = localStorage.getItem("selectedMaterial");
+
+      if (materialRaw) {
+        try {
+          const material = JSON.parse(materialRaw);
+          if (material && material.id) {
+            materialId = material.id;
+          }
+        } catch (e) {
+          console.error("❌ Помилка при розборі material:", e);
+        }
+      }
+
+      // Пример использования
+      if (!processingTypeId || !processingMethodId || !materialId) {
+        alert("⚠️ Не всі параметри вибрано!");
+        // Можешь остановить выполнение, если нужно
+        return;
+      }
+
       fetch(
         `${S_URL}/api/technological-solution/set/suggested?processingTypeId=${processingTypeId}&processingMethodId=${processingMethodId}&materialId=${materialId}`,
         {
@@ -135,7 +170,34 @@ function SetForm({ mode = "view" }) {
       })
       .catch(() => alert("❌ Не вдалося завантажити бренди"));
   }, []);
+  const handleCreateStatements = () => {
+    const selectedItems = [];
 
+    Object.entries(selectedSetItems).forEach(([indexStr, selected]) => {
+      const index = parseInt(indexStr, 10);
+      const set = suggestedSets[index];
+
+      if (selected.toolHolder) selectedItems.push(set.toolHolder);
+      if (selected.instrument) selectedItems.push(set.instrument);
+      if (selected.toolAdapter) selectedItems.push(set.toolAdapter);
+    });
+
+    const groupedBySupplier = {};
+    selectedItems.forEach((item) => {
+      const supplierId = item.supplier.id;
+      if (!groupedBySupplier[supplierId]) {
+        groupedBySupplier[supplierId] = [];
+      }
+      groupedBySupplier[supplierId].push(item);
+    });
+
+    setGroupedStatements(groupedBySupplier);
+    localStorage.setItem(
+      "setStatementsData",
+      JSON.stringify(groupedBySupplier)
+    );
+    //setMode("statements"); // перейти в режим перегляду відомостей
+  };
   const handleChange = (e, setter, fieldName) => {
     const { name, value } = e.target;
     setter((prev) => {
@@ -147,9 +209,9 @@ function SetForm({ mode = "view" }) {
       return updated;
     });
   };
-  const handleRateChange = (setId, value) => {
-    setRatings((prev) => ({ ...prev, [setId]: value }));
-  };
+  // const handleRateChange = (setId, value) => {
+  //   setRatings((prev) => ({ ...prev, [setId]: value }));
+  // };
   const toggleSelection = (id) => {
     setSelectedSetIds((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -296,14 +358,22 @@ function SetForm({ mode = "view" }) {
   };
 
   const handleAddSupplier = async () => {
-    if (!validate(supplier, ["name", "email", "mobile"])) {
+    if (!validate(supplier, ["name", "edrpou", "address", "email", "mobile"])) {
       alert("❌ Всі поля постачальника обов’язкові!");
       return;
     }
+
     try {
       await createEntity("/api/supplier/create", supplier);
       alert("✅ Постачальник доданий");
-      setSupplier({ name: "", email: "", mobile: "" });
+      setSupplier({
+        name: "",
+        edrpou: "",
+        address: "",
+        phone: "",
+        email: "",
+        mobile: "",
+      });
     } catch (err) {
       alert("❌ " + err.message);
     }
@@ -453,7 +523,7 @@ function SetForm({ mode = "view" }) {
       )}
 
       <div>
-        <strong>Постачальник:</strong> {data.supplierName}
+        <strong>Постачальник:</strong> {data.supplier.name}
       </div>
 
       <div>
@@ -469,6 +539,7 @@ function SetForm({ mode = "view" }) {
       </div>
     </fieldset>
   );
+
   return (
     <div>
       {isLoading ? (
@@ -509,8 +580,6 @@ function SetForm({ mode = "view" }) {
                 <button type="submit">💾 Зберегти комплект</button>
               </form>
             </div>
-
-            {/* Адмінська панель справа */}
             {isAdmin && (
               <div
                 style={{
@@ -520,6 +589,7 @@ function SetForm({ mode = "view" }) {
                 }}
               >
                 <h3>👤 Додати постачальника</h3>
+
                 <label>
                   Назва:{" "}
                   <input
@@ -529,6 +599,7 @@ function SetForm({ mode = "view" }) {
                   />
                 </label>
                 <br />
+
                 <label>
                   Email:{" "}
                   <input
@@ -538,6 +609,7 @@ function SetForm({ mode = "view" }) {
                   />
                 </label>
                 <br />
+
                 <label>
                   Телефон:{" "}
                   <input
@@ -547,6 +619,29 @@ function SetForm({ mode = "view" }) {
                   />
                 </label>
                 <br />
+
+                {/* ✅ Код ЄДРПОУ */}
+                <label>
+                  Код ЄДРПОУ:{" "}
+                  <input
+                    name="edrpou"
+                    value={supplier.edrpou}
+                    onChange={(e) => handleChange(e, setSupplier)}
+                  />
+                </label>
+                <br />
+
+                {/* ✅ Адреса */}
+                <label>
+                  Адреса:{" "}
+                  <input
+                    name="address"
+                    value={supplier.address}
+                    onChange={(e) => handleChange(e, setSupplier)}
+                  />
+                </label>
+                <br />
+
                 <button
                   onClick={handleAddSupplier}
                   style={{ marginTop: "0.5rem" }}
@@ -766,8 +861,31 @@ function SetForm({ mode = "view" }) {
                   ))}
                 </div>
               )}
+              {/* 📄 Кнопка для створення відомостей */}
+              <button
+                onClick={handleCreateStatements}
+                disabled={!hasAnySelected}
+                style={{
+                  marginTop: "1rem",
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "#007bff",
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "4px",
+                  cursor: hasAnySelected ? "pointer" : "not-allowed",
+                  opacity: hasAnySelected ? 1 : 0.5,
+                }}
+              >
+                📄 Сформувати відомості
+              </button>
             </div>
           )}
+          {/* {mode === "statements" && (
+            <StatementBuilder
+              groupedStatements={groupedStatements}
+              onBack={() => setMode("view")} // повернення назад
+            />
+          )} */}
         </>
       )}
     </div>

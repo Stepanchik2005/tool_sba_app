@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // додано
 
 const S_URL = "http://localhost:8080";
 
 export default function MyDetails() {
   const [details, setDetails] = useState([]);
   const [expandedDetailId, setExpandedDetailId] = useState(null);
+  const navigate = useNavigate(); // ініціалізація
 
   useEffect(() => {
     const cached = localStorage.getItem("userDetailHistory");
@@ -32,6 +34,10 @@ export default function MyDetails() {
 
   return (
     <div>
+      <button onClick={() => navigate(-1)} style={{ marginBottom: "1rem" }}>
+        ◀ Назад
+      </button>
+
       <h3>📜 Мої деталі</h3>
       {details.length === 0 && <p>Дані відсутні</p>}
       <ul style={{ padding: 0, listStyle: "none" }}>

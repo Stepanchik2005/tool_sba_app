@@ -1,0 +1,15 @@
+# Java / Maven
+**/target/
+*.log
+
+# Node.js
+**/node_modules/
+**/dist/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

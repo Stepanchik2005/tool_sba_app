@@ -28,7 +28,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())// ✅ сучасний синтаксис
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/register", "/api/login").permitAll()
+                        .requestMatchers("/api/user/register", "/api/user/login","/api/auth/**").permitAll()
                         .requestMatchers("/api/detail_attributes/create").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

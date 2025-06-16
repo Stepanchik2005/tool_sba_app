@@ -1,12 +1,6 @@
 package com.example.demo.dto.loginAndRegister;
 import lombok.Data;
 
-@Data
-public class AuthResponse {
-    private String token;
+public record AuthResponse(Long id, String username,String email, String fullName, String role, String token) {
 
-    public AuthResponse(String token)
-    {
-        this.token = token;
-    }
 }

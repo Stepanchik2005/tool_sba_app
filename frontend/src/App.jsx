@@ -1,7 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useNavigate } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import AppMenu from "./components/AppMenu";
 
+import SelectEnterprise from "./components/SelectEnterprise";
+import MaterialForm from "./components/MaterialForm";
+import UserDashboard from "./components/UserDashboard"; // або шлях до твого компонента
+import PrivateRoute from "./components/PrivateRoot";
+import DetailForm from "./components/DetailForm";
+
+import MachineForm from "./components/MachineForm";
+import ProcessingForm from "./components/ProcessingForm";
+import SetForm from "./components/SetForm";
+
+import StatementBuilder from "./components/StatementBuilder";
 const S_URL = "http://localhost:8080";
 
 function App() {
@@ -30,17 +42,66 @@ function App() {
 
   // 🚪 Вийти
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("selectedDetail");
+    localStorage.clear(); // або .removeItem(...) кілька разів
     setIsLoggedIn(false);
   };
 
   if (isAuthLoading) return null; // або <div>Завантаження...</div>
 
-  return isLoggedIn ? (
-    <AppMenu onLogout={handleLogout} />
-  ) : (
-    <LoginForm onLogin={() => setIsLoggedIn(true)} />
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/app-menu" replace />
+            ) : (
+              <Navigate to="/login-form" replace />
+            )
+          }
+        />
+        <Route path="/select-enterprise" element={<SelectEnterprise />} />
+        <Route path="/detail-form" element={<DetailForm />} />
+        <Route
+          path="/app-menu"
+          element={
+            <PrivateRoute isLoggedIn={isLoggedIn}>
+              <AppMenu onLogout={handleLogout} />
+            </PrivateRoute>
+          }
+        >
+          <Route path="materials" element={<MaterialForm />} />
+          <Route path="details" element={<DetailForm />} />
+          <Route path="machines" element={<MachineForm />} />
+          <Route path="processing" element={<ProcessingForm />} />
+          <Route path="set" element={<SetForm />} />
+          <Route
+            path="statements"
+            element={
+              <StatementBuilder
+                groupedStatements={JSON.parse(
+                  localStorage.getItem("setStatementsData") || "[]"
+                )}
+                onBack={() => Navigate("/app-menu/set")}
+              />
+            }
+          />
+        </Route>
+
+        <Route
+          path="/login-form"
+          element={
+            isLoggedIn ? (
+              <Navigate to="/app-menu" replace />
+            ) : (
+              <LoginForm onLogin={() => setIsLoggedIn(true)} />
+            )
+          }
+        />
+        <Route path="/cabinet" element={<UserDashboard />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

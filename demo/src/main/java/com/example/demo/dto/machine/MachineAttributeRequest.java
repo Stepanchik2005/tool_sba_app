@@ -11,5 +11,7 @@ public class MachineAttributeRequest {
     private String unit;
     private String inputType;       // "text", "number", "select"
     private String machineType;     // например "токарный"
+
+
     private List<String> options;
 }

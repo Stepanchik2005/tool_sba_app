@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class UserResponse {
-    private String username;
+    private String fullName;
     private String email;
-    private String role;
+    private String enterpriseName;
+    private String mobile;
 }

@@ -100,7 +100,7 @@ public class TechnologicalSolutionController {
         }).toList();
 
 
-        return  ResponseEntity.status(HttpStatus.OK).body(Map.of(
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
                 "status", HttpStatus.OK.value(),
                 "message", "Successfully getting",
                 "data", responses
@@ -122,12 +122,16 @@ public class TechnologicalSolutionController {
 
     private <T extends SetObjectResponse> T setResponse(T response, SetObject obj, WebsiteData websiteData)
     {
+        Supplier supplier = obj.getSupplier();
+        SupplierResponse supplierResponse = new SupplierResponse(supplier.getId(), supplier.getEmail(),
+                supplier.getName(), supplier.getMobile(), supplier.getEdpou(), supplier.getAddress());
+
         response.setId(obj.getId());
         response.setName(obj.getName());
         response.setMarking(obj.getMarking());
         response.setArticleNumber(obj.getArticleNumber());
         response.setLink(obj.getLink());
-        response.setSupplierName(obj.getSupplier().getName());
+        response.setSupplier(supplierResponse);
         response.setBrandName(obj.getBrand().getName());
         response.setWebsiteData(websiteData);
         return response;

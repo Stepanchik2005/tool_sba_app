@@ -13,20 +13,20 @@ public abstract class SetObjectResponse {
     private String marking;
     private String articleNumber;
     private String link;
-    private String supplierName;
+    private SupplierResponse supplier;
     private String brandName;
     private WebsiteData websiteData;
 
 
     public SetObjectResponse(Long id, String name, String marking, String articleNumber,  String link,
-                             String supplierName, String brandName)
+                             SupplierResponse supplier, String brandName)
     {
         this.id = id;
         this.name = name;
         this.marking = marking;
         this.articleNumber = articleNumber;
         this.link = link;
-        this.supplierName = supplierName;
+        this.supplier = supplier;
         this.brandName = brandName;
     }
 

@@ -24,4 +24,9 @@ public class Supplier {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    private String edpou;
+
+    private String address;
 }
+    

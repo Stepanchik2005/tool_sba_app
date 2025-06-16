@@ -1,15 +1,18 @@
-import React, { useState } from "react";
-import MaterialForm from "./MaterialForm";
-import DetailForm from "./DetailForm";
-import MachineForm from "./MachineForm";
-import ProcessingForm from "./ProcessingForm";
-import SetForm from "./SetForm"; // ✅ підключаємо нову форму
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 
 import "../style.css";
 
 function AppMenu({ onLogout, userDetails, userMachines }) {
-  const [section, setSection] = useState("materials");
+  const location = useLocation();
+  // const [section, setSection] = useState("details");
 
+  const section = location.pathname.split("/")[2] || "details"; // отримуємо вкладку з URL
+  const navigate = useNavigate(); // 🆕
+  const changeSection = (name) => navigate(`/app-menu/${name}`);
+  useEffect(() => {
+    changeSection("details");
+  }, []);
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       {/* Верхняя панель */}
@@ -21,8 +24,23 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
           padding: "1rem",
           backgroundColor: "#f5f5f5",
           borderBottom: "1px solid #ddd",
+          gap: "1rem", // 🆕 щоб між кнопками був відступ
         }}
       >
+        <button
+          onClick={() => navigate("/cabinet")} // 🆕 кнопка кабінету
+          style={{
+            background: "#007bff",
+            color: "#fff",
+            padding: "0.5rem 1rem",
+            borderRadius: "6px",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          👤 Кабінет
+        </button>
+
         <button
           onClick={onLogout}
           style={{
@@ -38,43 +56,53 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
         </button>
       </div>
 
-      {/* Основная часть (вкладки + контент) */}
+      {/* Основна частина і вкладки залишаються без змін */}
       <div style={{ display: "flex", flexGrow: 1 }}>
-        {/* Левая панель вкладок */}
         <div className="sidebar">
           <button
-            onClick={() => setSection("materials")}
-            className={`tab-btn ${section === "materials" ? "active" : ""}`}
-          >
-            🧪 Матеріал
-          </button>
-          <button
-            onClick={() => setSection("details")}
+            onClick={() => changeSection("details")}
             className={`tab-btn ${section === "details" ? "active" : ""}`}
           >
             📦 Деталь
           </button>
           <button
-            onClick={() => setSection("machines")}
+            onClick={() => changeSection("materials")}
+            className={`tab-btn ${section === "materials" ? "active" : ""}`}
+          >
+            🧪 Матеріал
+          </button>
+          <button
+            onClick={() => changeSection("machines")}
             className={`tab-btn ${section === "machines" ? "active" : ""}`}
+            disabled={!localStorage.getItem("selectedMaterial")}
           >
             🛠️ Верстат
           </button>
           <button
-            onClick={() => setSection("processing")}
+            onClick={() => changeSection("processing")}
             className={`tab-btn ${section === "processing" ? "active" : ""}`}
+            disabled={!localStorage.getItem("selectedMaterial")}
           >
-            ⚙️ Тех. рішення
+            ⚙️ Технологічна ситуація
           </button>
           <button
-            onClick={() => setSection("set")}
+            onClick={() => changeSection("set")}
             className={`tab-btn ${section === "set" ? "active" : ""}`}
+            disabled={
+              !JSON.parse(localStorage.getItem("technical-situation")) == true
+            }
           >
-            🔗 Комплект
+            🔗 Технологічне рішення
+          </button>
+          <button
+            onClick={() => changeSection("statements")}
+            className={`tab-btn ${section === "statements" ? "active" : ""}`}
+            disabled={!localStorage.getItem("setStatementsData")} // активна тільки якщо є відомості
+          >
+            📄 Відомості
           </button>
         </div>
 
-        {/* Контент */}
         <div
           style={{
             flexGrow: 1,
@@ -84,11 +112,7 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
             boxSizing: "border-box",
           }}
         >
-          {section === "materials" && <MaterialForm />}
-          {section === "details" && <DetailForm />}
-          {section === "machines" && <MachineForm />}
-          {section === "processing" && <ProcessingForm />}
-          {section === "set" && <SetForm />} {/* ✅ нова секція */}
+          <Outlet />
         </div>
       </div>
     </div>

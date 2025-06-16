@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import MyMachines from "./MyMachines";
 
 //const S_URL = "http://100.104.181.58:8080";
@@ -18,7 +18,8 @@ export default function MachineForm() {
     model: "",
     chpkSystem: "",
   });
-
+  const [holderCombinations, setHolderCombinations] = useState([]);
+  const [unit, setUnit] = useState("");
   const machineType =
     mode === "lathe" ? "LATHE" : mode === "milling" ? "MILLING" : "";
 
@@ -32,6 +33,14 @@ export default function MachineForm() {
         .then((res) => res.json())
         .then((data) => setAttributes(data.data || []))
         .catch(() => alert("❌ Не вдалося завантажити атрибути"));
+      fetch(`${S_URL}/api/machine/tool-holder/combinations`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => setHolderCombinations(data))
+        .catch(() => alert("❌ Не вдалося завантажити словник оправок"));
     }
   }, [mode]);
 
@@ -47,6 +56,8 @@ export default function MachineForm() {
       machineType,
       inputType: attrType,
       name: attrName,
+      unit: unit.trim() === "" ? null : unit,
+
       ...(attrType === "Select" && { options }),
     };
 
@@ -108,6 +119,17 @@ export default function MachineForm() {
       })
       .catch(() => alert("❌ Не вдалося зберегти станок"));
   };
+  const selectedStandard = attributeValues["Стандарт оправки"]?.value;
+  const availableTypes = holderCombinations
+    .filter((c) => c.standard === selectedStandard)
+    .map((c) => c.holderType);
+
+  const selectedType = attributeValues["Тип оправки"]?.value;
+  const availableStuds = holderCombinations
+    .filter(
+      (c) => c.standard === selectedStandard && c.holderType === selectedType
+    )
+    .map((c) => c.pullStudType);
 
   if (mode === "main") {
     return (
@@ -218,11 +240,35 @@ export default function MachineForm() {
                     }}
                   >
                     <option value="">Оберіть</option>
-                    {attr.options.map((opt, j) => (
-                      <option key={j} value={opt}>
-                        {opt}
-                      </option>
-                    ))}
+                    {attr.name === "Тип оправки" && selectedStandard ? (
+                      availableTypes.length > 0 ? (
+                        availableTypes.map((opt, j) => (
+                          <option key={j} value={opt}>
+                            {opt}
+                          </option>
+                        ))
+                      ) : (
+                        <option disabled>Немає доступних типів</option>
+                      )
+                    ) : attr.name === "Тип штревеля" &&
+                      selectedStandard &&
+                      selectedType ? (
+                      availableStuds.length > 0 ? (
+                        availableStuds.map((opt, j) => (
+                          <option key={j} value={opt}>
+                            {opt}
+                          </option>
+                        ))
+                      ) : (
+                        <option disabled>Немає доступних штревелів</option>
+                      )
+                    ) : (
+                      attr.options.map((opt, j) => (
+                        <option key={j} value={opt}>
+                          {opt}
+                        </option>
+                      ))
+                    )}
                   </select>
                 ) : (
                   <input
@@ -271,6 +317,12 @@ export default function MachineForm() {
             onChange={(e) => setAttrName(e.target.value)}
           />
 
+          <label>Одиниця виміру</label>
+          <input
+            type="text"
+            value={unit}
+            onChange={(e) => setUnit(e.target.value)}
+          />
           {attrType === "Select" && (
             <div>
               <label>Значення</label>

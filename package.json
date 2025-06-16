@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@yar.ua/numerals": "file:../numerals.js-release-1.0.7"
+  }
+}

@@ -1,6 +1,8 @@
 package com.example.demo.controllers.Set;
 
+import com.example.demo.dto.set.SupplierResponse;
 import com.example.demo.dto.set.ToolAdapterRequest;
+import com.example.demo.dto.set.ToolAdapterResponse;
 import com.example.demo.models.Set.Brand;
 import com.example.demo.models.Set.Supplier;
 import com.example.demo.models.Set.ToolAdapter;
@@ -80,10 +82,23 @@ public class ToolAdapterController {
 
         ToolAdapter saved = adapterRepository.save(adapter);
 
+        SupplierResponse supplierResponse = new SupplierResponse(supplier.getId(), supplier.getEmail(),
+                supplier.getName(), supplier.getMobile(), supplier.getEdpou(), supplier.getAddress());
+
+        ToolAdapterResponse response = new ToolAdapterResponse();
+        response.setId(saved.getId());
+        response.setName(saved.getName());
+        response.setLink(saved.getLink());
+        response.setName(saved.getName());
+        response.setMarking(saved.getMarking());
+        response.setBrandName(saved.getBrand().getName());
+        response.setArticleNumber(saved.getArticleNumber());
+        response.setSupplier(supplierResponse);
+
         return ResponseEntity.status(HttpStatus.OK).body(Map.of(
                 "status", HttpStatus.OK.value(),
                 "message", "Tool adapter created successfully",
-                "data", saved
+                "data", response
         ));
     }
 }

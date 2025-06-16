@@ -35,6 +35,8 @@ export default function ProcessingForm() {
   const [userMethods, setUserMethods] = useState([]);
   const [selectedMethodId, setSelectedMethodId] = useState(null);
 
+  //const [isTechSituationSet, setIsTechSitruationSet] = useState(false);
+
   useEffect(() => {
     const cached = localStorage.getItem("userDetailHistory");
     if (cached) setDetails(JSON.parse(cached));
@@ -216,6 +218,7 @@ export default function ProcessingForm() {
     })
       .then((res) => res.json())
       .then((data) => {
+        localStorage.setItem("technical-situation", true);
         alert("✅ Тех. рішення збережено успішно!");
       })
       .catch(() => alert("❌ Помилка при збереженні тех. рішення"));

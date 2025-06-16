@@ -22,7 +22,7 @@ public class User {
     @Column(name = "password_hash", nullable = false)
     private String password;
 
-    @Column(name = "fullname")
+    @Column(name = "full_name")
     private String fullName;
 
     @Column(name="role")
@@ -30,4 +30,10 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
+
+    @ManyToOne
+    @JoinColumn(name = "enterprise_id")
+    private Enterprise enterprise;
+
+    private String mobile;
 }

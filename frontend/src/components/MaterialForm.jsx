@@ -11,7 +11,7 @@ function MaterialForm() {
     groupIso: "",
     hardnessMin: "",
     hardnessMax: "",
-    hardness: "",
+    hardness: "50",
   });
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -72,6 +72,17 @@ function MaterialForm() {
 
   const handleSave = () => {
     const saved = { ...form, brand: selected };
+
+    // Перевірка: всі поля не повинні бути порожніми
+    const allFieldsFilled = Object.values(saved).every(
+      (value) => value !== null && value !== undefined && value !== ""
+    );
+
+    if (!allFieldsFilled) {
+      alert("⚠️ Будь ласка, заповніть усі поля перед збереженням.");
+      return;
+    }
+
     localStorage.setItem("selectedMaterial", JSON.stringify(saved));
     console.log("💾 Збережено матеріал:", saved);
     alert("✅ Матеріал збережено локально!");

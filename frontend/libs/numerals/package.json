@@ -1,0 +1,44 @@
+{
+  "name": "@yar.ua/numerals",
+  "version": "1.0.7",
+  "description": "Number to text - Inflector for Ukrainian numerals",
+  "type": "module",
+  "types": "lib/index.d.ts",
+  "main": "lib/index.js",
+  "homepage": "https://yar.org.ua",
+  "files": ["lib/"],
+  "scripts": {
+    "test": "mocha",
+    "build": "tsc --build"
+  },
+  "directories": {
+    "lib": "./lib",
+    "src": "./src",
+    "test": "./test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.com/yar.ua/numerals.js/"
+  },
+  "keywords": [
+    "NLP",
+    "Ukrainian",
+    "numerals",
+    "spelling",
+    "text",
+    "numbers",
+    "uk",
+    "syntax"
+  ],
+  "author": "Yar team <team@yar.org.ua>",
+  "license": "MIT-0",
+  "devDependencies": {
+    "@types/mocha": "^10.0.2",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "@types/node": "^20.7.2",
+    "typescript": "^5.2.2",
+    "ts-node": "^10.9.1"
+  }
+}

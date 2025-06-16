@@ -1,6 +1,7 @@
 package com.example.demo.controllers.Set;
 import com.example.demo.dto.set.InstrumentRequest;
 import com.example.demo.dto.set.InstrumentResponse;
+import com.example.demo.dto.set.SupplierResponse;
 import com.example.demo.models.InstrumentMaterial;
 import com.example.demo.models.Material;
 import com.example.demo.models.Set.*;
@@ -90,6 +91,9 @@ public class InstrumentController {
 
         String brandName = saved.getBrand() != null ? saved.getBrand().getName() : null;
 
+        SupplierResponse supplierResponse = new SupplierResponse(supplier.getId(), supplier.getEmail(),
+                supplier.getName(), supplier.getMobile(), supplier.getEdpou(), supplier.getAddress());
+
         InstrumentResponse response = new InstrumentResponse(
                 saved.getId(),
                 saved.getName(),
@@ -97,7 +101,7 @@ public class InstrumentController {
                 saved.getArticleNumber(),
                 saved.getLink(),
                 saved.getInstrumentMaterial(),
-                saved.getSupplier().getName(),
+                supplierResponse,
                 brandName,
                 material.getBrand()
         );

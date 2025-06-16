@@ -1,6 +1,7 @@
 package com.example.demo.controllers.Set;
 
 import com.example.demo.dto.set.SupplierRequest;
+import com.example.demo.dto.set.SupplierResponse;
 import com.example.demo.dto.set.ToolHolderRequest;
 import com.example.demo.dto.set.ToolHolderResponse;
 import com.example.demo.models.Set.Brand;
@@ -105,13 +106,16 @@ public class ToolHolderController {
 
         ToolHolder saved = holderRepository.save(newHolder);
 
+        SupplierResponse supplierResponse = new SupplierResponse(supplier.getId(), supplier.getEmail(),
+                supplier.getName(), supplier.getMobile(), supplier.getEdpou(), supplier.getAddress());
+
         ToolHolderResponse response = new ToolHolderResponse(
                 saved.getId(),
                 saved.getName(),
                 saved.getMarking(), 
                 saved.getArticleNumber(),
                 saved.getLink(),
-                saved.getSupplier().getName(),
+                supplierResponse,
                 saved.getBrand() != null ? saved.getBrand().getName() : null
         );
 

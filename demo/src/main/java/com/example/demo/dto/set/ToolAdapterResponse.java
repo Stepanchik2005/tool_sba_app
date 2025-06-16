@@ -7,15 +7,15 @@ public class ToolAdapterResponse extends SetObjectResponse
 {
     public ToolAdapterResponse(){};
     public ToolAdapterResponse(Long id, String name, String marking, String articleNumber, String link,
-                               String supplierName, String brandName)
+                               SupplierResponse supplier, String brandName)
     {
-        super(id, name, marking, articleNumber, link, supplierName, brandName);
+        super(id, name, marking, articleNumber, link, supplier, brandName);
     }
 
     public ToolAdapterResponse(Long id, String name, String marking, String articleNumber, String link,
-                               String supplierName, String brandName, WebsiteData websiteData)
+                               SupplierResponse supplier, String brandName, WebsiteData websiteData)
     {
-        super(id, name, marking, articleNumber, link, supplierName, brandName, websiteData);
+        super(id, name, marking, articleNumber, link, supplier, brandName, websiteData);
     }
 }
 
