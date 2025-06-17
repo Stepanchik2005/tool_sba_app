@@ -3,6 +3,7 @@ package com.example.demo.models.Process;
 import com.example.demo.models.CoolingMethod;
 import com.example.demo.models.CoolingType;
 import com.example.demo.models.Details.Detail;
+import com.example.demo.models.TechnologicalSituation;
 import com.example.demo.models.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -42,4 +43,7 @@ public class ProcessingTypeAttributeValues {
     @JoinColumn(name = "cooling_type_id")
     private CoolingType coolingType;
 
+    @ManyToOne
+    @JoinColumn(name = "technological_situation_id")
+    private TechnologicalSituation technologicalSituation;
 }

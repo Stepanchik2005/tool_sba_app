@@ -9,7 +9,9 @@ public class ProcessingTypeAttributeValuesRequest {
     private Long detailId;
     private Long coolingTypeId;
     private Long coolingMethodId;
+    private Long technologicalSituationId;
     private List<AttributeValueItem> values;
+
 
     @Data
     public static class AttributeValueItem {

@@ -62,7 +62,7 @@ function App() {
           }
         />
         <Route path="/select-enterprise" element={<SelectEnterprise />} />
-        <Route path="/detail-form" element={<DetailForm />} />
+
         <Route
           path="/app-menu"
           element={
@@ -71,6 +71,7 @@ function App() {
             </PrivateRoute>
           }
         >
+          <Route index element={<Navigate to="details" replace />} />
           <Route path="materials" element={<MaterialForm />} />
           <Route path="details" element={<DetailForm />} />
           <Route path="machines" element={<MachineForm />} />

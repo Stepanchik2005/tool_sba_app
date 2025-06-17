@@ -1,6 +1,11 @@
 package com.example.demo.controllers;
 
+import com.example.demo.dto.ProcessingMethodResponse;
+import com.example.demo.dto.ProcessingTypeNodeResponse;
 import com.example.demo.dto.TechnologicalSituationRequest;
+import com.example.demo.dto.TechnologicalSolutionResponse;
+import com.example.demo.dto.detail.DetailResponse;
+import com.example.demo.dto.set.TechnologicalSituationResponse;
 import com.example.demo.models.*;
 
 import com.example.demo.repositories.*;
@@ -12,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -56,5 +62,37 @@ public class TechnologicalSituationController {
                 "status", 200,
                 "message", "Технологічне рішення збережено успішно"
         ));
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<?> getAll(@RequestParam Long detailId,Authentication auth)
+    {
+        User user = userRepo.findByUsername(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<TechnologicalSituation> situations = technologicalSituationRepo
+                .findAllByDetailIdAndUserId(detailId, user.getId());
+
+        List<TechnologicalSituationResponse> responses = situations.stream().map((m) ->{
+            DetailResponse detailResponse = new DetailResponse(m.getDetail().getId(),
+                    m.getDetail().getName(), m.getDetail().getNumber(), m.getDetail().getOrderNumber(),
+                    m.getDetail().getShape());
+
+            ProcessingMethodResponse processingMethodResponse = new ProcessingMethodResponse(m.getProcessingMethod().getId(),
+                    m.getProcessingMethod().getName());
+
+            ProcessingTypeNodeResponse processingTypeNodeResponse = new ProcessingTypeNodeResponse();
+            processingTypeNodeResponse.setId(m.getProcessingType().getId());
+            processingTypeNodeResponse.setUrl(m.getProcessingType().getUrl());
+            processingTypeNodeResponse.setLeaf(false); // неважно что
+
+            TechnologicalSituationResponse response = new TechnologicalSituationResponse(m.getId(),
+                    detailResponse, processingMethodResponse, processingTypeNodeResponse);
+
+            return response;
+        }).toList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(Map.of("status", HttpStatus.OK.value(),
+                "data", responses));
     }
 }

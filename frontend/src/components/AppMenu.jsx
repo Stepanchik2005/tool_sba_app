@@ -5,14 +5,39 @@ import "../style.css";
 
 function AppMenu({ onLogout, userDetails, userMachines }) {
   const location = useLocation();
-  // const [section, setSection] = useState("details");
+
+  const [selectedMaterial, setSelectedMaterial] = useState(() =>
+    localStorage.getItem("selectedMaterial")
+  );
+  const [selectedSituation, setSelectedSituation] = useState(() =>
+    localStorage.getItem("technical-situation")
+  );
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const value = localStorage.getItem("selectedMaterial");
+      if (value !== selectedMaterial) {
+        setSelectedMaterial(value);
+      }
+    }, 300); // можно даже 100 мс
+
+    return () => clearInterval(interval);
+  }, [selectedMaterial]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const value = localStorage.getItem("technical-situation");
+      if (value !== selectedSituation) {
+        setSelectedSituation(value);
+      }
+    }, 100); // можно даже 100 мс
+
+    return () => clearInterval(interval);
+  }, [selectedSituation]);
 
   const section = location.pathname.split("/")[2] || "details"; // отримуємо вкладку з URL
   const navigate = useNavigate(); // 🆕
   const changeSection = (name) => navigate(`/app-menu/${name}`);
-  useEffect(() => {
-    changeSection("details");
-  }, []);
+
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       {/* Верхняя панель */}
@@ -74,14 +99,14 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
           <button
             onClick={() => changeSection("machines")}
             className={`tab-btn ${section === "machines" ? "active" : ""}`}
-            disabled={!localStorage.getItem("selectedMaterial")}
+            disabled={!selectedMaterial}
           >
             🛠️ Верстат
           </button>
           <button
             onClick={() => changeSection("processing")}
             className={`tab-btn ${section === "processing" ? "active" : ""}`}
-            disabled={!localStorage.getItem("selectedMaterial")}
+            disabled={!selectedMaterial}
           >
             ⚙️ Технологічна ситуація
           </button>

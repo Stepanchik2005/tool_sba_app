@@ -14,4 +14,7 @@ public interface TechnologicalSituationRepository extends JpaRepository<Technolo
 
     // (опційно) Отримати рішення по деталі + методу + типу
     List<TechnologicalSituation> findAllByDetailIdAndProcessingMethodIdAndProcessingTypeId(Long detailId, Long methodId, Long typeId);
+
+    List<TechnologicalSituation> findAllByDetailIdAndUserId(Long detailId, Long userId);
+
 }

@@ -8,6 +8,7 @@ import com.example.demo.models.Process.ProcessingTypeAttributeValues;
 import com.example.demo.models.Process.ProcessingTypeAttributes;
 import com.example.demo.repositories.*;
 import com.example.demo.repositories.Details.DetailRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/processing-type/attribute-values")
+@RequiredArgsConstructor
 public class ProcessingTypeAttributeValuesController {
 
     private final ProcessingTypeRepository processingTypeRepository;
@@ -33,23 +35,7 @@ public class ProcessingTypeAttributeValuesController {
     private final DetailRepository detailRepo;
     private final CoolingTypeRepository coolingTypeRepository;
     private final CoolingMethodRepository coolingMethodRepository;
-
-    public ProcessingTypeAttributeValuesController(ProcessingTypeRepository processingTypeRepository,
-                                        ProcessingTypeAttributeBindingsRepository bindingsRepository,
-                                        ProcessingMethodRepository methodRepository, ProcessingTypeAttributesRepository attributesRepository,
-                                                   ProcessingTypeAttributeValuesRepository valuesRepository, UserRepository userRepo,
-                                                   DetailRepository detailRepo, CoolingTypeRepository coolingTypeRepository,
-                                                   CoolingMethodRepository coolingMethodRepository) {
-        this.processingTypeRepository = processingTypeRepository;
-        this.bindingsRepository = bindingsRepository;
-        this.methodRepository = methodRepository;
-        this.attributesRepository = attributesRepository;
-        this.valuesRepository = valuesRepository;
-        this.userRepo = userRepo;
-        this.detailRepo = detailRepo;
-        this.coolingTypeRepository = coolingTypeRepository;
-        this.coolingMethodRepository = coolingMethodRepository;
-    }
+    private final TechnologicalSituationRepository situationRepository;
 
     @PostMapping("/create")
     public ResponseEntity<?> createProcessingTypeAttributeValues(
@@ -65,6 +51,9 @@ public class ProcessingTypeAttributeValuesController {
 
         Detail detail = detailRepo.findById(request.getDetailId())
                 .orElseThrow(() -> new RuntimeException("Detail not found"));
+
+        TechnologicalSituation situation = situationRepository.findById(request.getTechnologicalSituationId())
+                .orElseThrow(() -> new RuntimeException("Technological situation not found"));
 
         CoolingType coolingType = null;
         CoolingMethod coolingMethod = null;
@@ -106,6 +95,7 @@ public class ProcessingTypeAttributeValuesController {
             newValue.setProcessingTypeAttributes(attribute);
             newValue.setUser(user);
             newValue.setValue(item.getValue());
+            newValue.setTechnologicalSituation(situation);
 
             // ⬇️ Привязка охолодження
             newValue.setCoolingType(coolingType);
