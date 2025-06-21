@@ -1,8 +1,8 @@
 import React, { useState, useEffect, use } from "react";
 import MyMachines from "./MyMachines";
-
+import { S_URL } from "./constants";
 //const S_URL = "http://100.104.181.58:8080";
-const S_URL = "http://localhost:8080";
+//const S_URL = "http://localhost:8080";
 export default function MachineForm() {
   const [mode, setMode] = useState("main"); // "main" | "lathe" | "milling"
   const [showAttrForm, setShowAttrForm] = useState(false);

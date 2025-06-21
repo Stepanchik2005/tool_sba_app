@@ -115,6 +115,9 @@ export default function ProcessingTreeForm({
         attributeId: parseInt(attributeId),
         value,
       })),
+      technologicalSituationId: parseInt(
+        JSON.parse(localStorage.getItem("saved-technical-situation-id"))
+      ),
     };
 
     // Добавим coolingTypeId, только если выбран

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import AddMaterialForm from "./AddMaterialForm";
-
+import { S_URL } from "./constants";
 //const S_URL = "http://100.104.181.58:8080"; // 🔧 відносний шлях
-const S_URL = "http://localhost:8080";
+//const S_URL = "http://localhost:8080";
 function MaterialForm() {
   const [materials, setMaterials] = useState([]);
   const [selected, setSelected] = useState("");

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { S_URL } from "./constants";
 const StarRating = ({ setId, initial = 0, onSubmit }) => {
   const [rating, setRating] = useState(initial);
   const [saved, setSaved] = useState(false);

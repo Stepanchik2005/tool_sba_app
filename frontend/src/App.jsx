@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useNavigate } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import
 import LoginForm from "./components/LoginForm";
 import AppMenu from "./components/AppMenu";
 
@@ -14,7 +15,7 @@ import ProcessingForm from "./components/ProcessingForm";
 import SetForm from "./components/SetForm";
 
 import StatementBuilder from "./components/StatementBuilder";
-const S_URL = "http://localhost:8080";
+//const S_URL = "http://localhost:8080";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -80,12 +81,7 @@ function App() {
           <Route
             path="statements"
             element={
-              <StatementBuilder
-                groupedStatements={JSON.parse(
-                  localStorage.getItem("setStatementsData") || "[]"
-                )}
-                onBack={() => Navigate("/app-menu/set")}
-              />
+              <StatementBuilder onBack={() => Navigate("/app-menu/set")} />
             }
           />
         </Route>

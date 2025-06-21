@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-
-const S_URL = "http://localhost:8080";
+import { S_URL } from "./constants";
+//const S_URL = "http://localhost:8080";
 
 export default function MyMachines() {
   const [machines, setMachines] = useState([]);

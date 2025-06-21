@@ -5,8 +5,8 @@ import InputMask from "react-input-mask";
 import EmailVerification from "./EmailVerification";
 import SelectEnterprise from "./SelectEnterprise";
 //const S_URL = "http://100.104.181.58:8080";
-
-const S_URL = "http://localhost:8080";
+import { S_URL } from "./constants";
+//const S_URL = "http://localhost:8080";
 function LoginForm({ onLogin }) {
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({

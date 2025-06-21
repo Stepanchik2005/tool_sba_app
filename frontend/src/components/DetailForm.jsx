@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import MyDetails from "./MyDetails";
-
+import { S_URL } from "./constants";
 //const S_URL = "http://100.104.181.58:8080";
-const S_URL = "http://localhost:8080";
+//const S_URL = "http://localhost:8080";
 export default function DetailForm() {
   const [formData, setFormData] = useState({
     orderNumber: "",

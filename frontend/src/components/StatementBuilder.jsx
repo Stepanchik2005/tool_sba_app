@@ -4,7 +4,7 @@ import { data } from "react-router-dom";
 import { inflect } from "@yar.ua/numerals/lib/grammar.js";
 import html2pdf from "html2pdf.js";
 import { inflect_cardinal, inflect_decimal } from "@yar.ua/numerals";
-export default function StatementBuilder({ groupedStatements, onBack }) {
+export default function StatementBuilder({ onBack }) {
   const [edpouSupplierValue, setSupplierEdpouValue] = useState();
   const [emailSupplierValue, setSupplierEmailValue] = useState();
   const [mobileSupplierValue, setSupplierMobileValue] = useState();
@@ -17,13 +17,14 @@ export default function StatementBuilder({ groupedStatements, onBack }) {
   const [enterpriseNameCustomerValue, setEnterpriseNameCustomerValue] =
     useState();
   const [fullNameCustomerValue, setFullNameCustomerValue] = useState();
+  const [groupedStatements, setGroupedStatements] = useState({});
 
   const [quantities, setQuantites] = useState([]);
-  const supplierIds = Object.keys(groupedStatements);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const currentSupplierId = supplierIds[currentIndex];
-  const items = groupedStatements[currentSupplierId];
-  const supplier = items[0]?.supplier; // беремо дані постачальника з першого айтему
+  const supplierIds = Object.keys(groupedStatements || {});
+  const currentSupplierId = supplierIds[currentIndex] || null;
+  const items = groupedStatements?.[currentSupplierId] || [];
+  const supplier = items[0]?.supplier || null;
 
   const [overallPrice, setOverallPrice] = useState(0);
 
@@ -68,6 +69,16 @@ export default function StatementBuilder({ groupedStatements, onBack }) {
   };
 
   const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    const raw = localStorage.getItem("setStatementsData");
+    if (raw) {
+      try {
+        setGroupedStatements(JSON.parse(raw));
+      } catch (e) {
+        console.error("❌ Помилка парсингу setStatementsData", e);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     // Якщо постачальник уже ініціалізований — виходимо

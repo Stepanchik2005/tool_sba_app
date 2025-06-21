@@ -36,7 +36,7 @@ function SetForm() {
     email: "",
     mobile: "",
   });
-  const [mode, setMode] = useState("view"); // "view" або "statements"
+  const [mode, setMode] = useState(""); // "view" або "statements"
   const [groupedStatements, setGroupedStatements] = useState({});
 
   const [brand, setBrand] = useState({ name: "" });
@@ -282,10 +282,15 @@ function SetForm() {
         taRes = await createEntity("/api/tool-adapter/create", adapter);
       }
 
+      const situationId = JSON.parse(
+        localStorage.getItem("saved-technical-situation-id")
+      );
+
       const setPayload = {
         toolHolderId: thRes.data.id,
         instrumentId: iRes.data.id,
         toolAdapterId: taRes ? taRes.data.id : null,
+        situationId,
       };
 
       const setRes = await createEntity("/api/set/create", setPayload);
@@ -391,18 +396,6 @@ function SetForm() {
     } catch (err) {
       alert("❌ " + err.message);
     }
-  };
-  const toggleSetItemSelection = (setIndex, itemType) => {
-    setSelectedSetItems((prev) => {
-      const current = prev[setIndex] || {};
-      return {
-        ...prev,
-        [setIndex]: {
-          ...current,
-          [itemType]: !current[itemType],
-        },
-      };
-    });
   };
 
   const renderGroup = (title, data, setter, fieldName) => (

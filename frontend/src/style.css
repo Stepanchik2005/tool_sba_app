@@ -202,3 +202,18 @@ img {
     transform: rotate(360deg);
   }
 }
+
+.sets td,
+.sets th {
+  word-wrap: break-word;
+  white-space: normal;
+  padding: 0.5rem;
+  vertical-align: top;
+  text-align: center;
+  font-size: 14px;
+}
+
+.sets td img {
+  max-width: 40px;
+  text-align: center;
+}

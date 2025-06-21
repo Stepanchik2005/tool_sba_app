@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import ProcessingTreeForm from "./ProcessingTreeForm";
 import { processingMethods } from "./constants";
-
-const S_URL = "http://localhost:8080";
+import { S_URL } from "./constants";
+//const S_URL = "http://localhost:8080";
 const units = ["мм", "мкм"];
 
 export default function ProcessingForm() {
@@ -189,16 +189,31 @@ export default function ProcessingForm() {
       .catch(() => alert("❌ Не вдалося створити атрибут"));
   };
   const handleSaveTechnologicalSituation = () => {
+    const selectedMaterial = localStorage.getItem("selectedMaterial");
     if (
       !selectedDetail ||
       !selectedMachine ||
       !selectedMethodId ||
       !selectedCoolingType ||
       !selectedCoolingMethod ||
-      !selectedTypeId
+      !selectedTypeId ||
+      !selectedMaterial
     ) {
       alert("❌ Будь ласка, оберіть деталь, станок, метод та інше");
       return;
+    }
+    let materialId = null;
+    const materialRaw = localStorage.getItem("selectedMaterial");
+
+    if (materialRaw) {
+      try {
+        const material = JSON.parse(materialRaw);
+        if (material && material.id) {
+          materialId = material.id;
+        }
+      } catch (e) {
+        console.error("❌ Помилка при розборі material:", e);
+      }
     }
 
     fetch(`${S_URL}/api/technological-situation/create`, {
@@ -214,11 +229,13 @@ export default function ProcessingForm() {
         processingTypeId: parseInt(selectedTypeId),
         coolingTypeId: parseInt(selectedCoolingType),
         coolingMethodId: parseInt(selectedCoolingMethod),
+        materialId,
       }),
     })
       .then((res) => res.json())
       .then((data) => {
         localStorage.setItem("technical-situation", true);
+        localStorage.setItem("saved-technical-situation-id", data.id);
         alert("✅ Тех. рішення збережено успішно!");
       })
       .catch(() => alert("❌ Помилка при збереженні тех. рішення"));

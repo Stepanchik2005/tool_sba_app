@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 //const S_URL = "http://100.104.181.58:8080";
-const S_URL = "http://localhost:8080";
+//const S_URL = "http://localhost:8080";
 function AddMaterialForm({ onBack }) {
   const [form, setForm] = useState({
     brand: "",

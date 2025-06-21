@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useLocation, Outlet } from "react-router-dom";
-
+import { S_URL } from "./constants";
 import "../style.css";
 
 function AppMenu({ onLogout, userDetails, userMachines }) {
@@ -12,13 +12,16 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
   const [selectedSituation, setSelectedSituation] = useState(() =>
     localStorage.getItem("technical-situation")
   );
+  const [statementData, setStatementData] = useState(() =>
+    localStorage.getItem("setStatementsData")
+  );
   useEffect(() => {
     const interval = setInterval(() => {
       const value = localStorage.getItem("selectedMaterial");
       if (value !== selectedMaterial) {
         setSelectedMaterial(value);
       }
-    }, 300); // можно даже 100 мс
+    }, 100); // можно даже 100 мс
 
     return () => clearInterval(interval);
   }, [selectedMaterial]);
@@ -33,6 +36,17 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
 
     return () => clearInterval(interval);
   }, [selectedSituation]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const value = localStorage.getItem("setStatementsData");
+      if (value !== statementData) {
+        setStatementData(value);
+      }
+    }, 100); // можно даже 100 мс
+
+    return () => clearInterval(interval);
+  }, [statementData]);
 
   const section = location.pathname.split("/")[2] || "details"; // отримуємо вкладку з URL
   const navigate = useNavigate(); // 🆕
@@ -113,16 +127,14 @@ function AppMenu({ onLogout, userDetails, userMachines }) {
           <button
             onClick={() => changeSection("set")}
             className={`tab-btn ${section === "set" ? "active" : ""}`}
-            disabled={
-              !JSON.parse(localStorage.getItem("technical-situation")) == true
-            }
+            disabled={!selectedSituation}
           >
             🔗 Технологічне рішення
           </button>
           <button
             onClick={() => changeSection("statements")}
             className={`tab-btn ${section === "statements" ? "active" : ""}`}
-            disabled={!localStorage.getItem("setStatementsData")} // активна тільки якщо є відомості
+            disabled={!statementData} // активна тільки якщо є відомості
           >
             📄 Відомості
           </button>
