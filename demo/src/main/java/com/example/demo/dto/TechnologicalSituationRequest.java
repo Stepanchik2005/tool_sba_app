@@ -6,5 +6,7 @@ public record TechnologicalSituationRequest(
         Long processingMethodId,
         Long processingTypeId,
         Long coolingTypeId,
-        Long coolingMethodId
+        Long coolingMethodId,
+        Long materialId,
+        Long setId
 ) {}

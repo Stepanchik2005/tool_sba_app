@@ -66,15 +66,15 @@ public class ToolHolderController {
     {
         User user = userRepo.findByUsername(auth.getName()).orElseThrow(() -> new RuntimeException("User not found"));
 
-         Optional<ToolHolder> existing = holderRepository.findByUserIdAndSupplierIdAndArticleNumber(user.getId(), request.supplierId(), request.articleNumber());
+        // Optional<ToolHolder> existing = holderRepository.findByUserIdAndSupplierIdAndArticleNumber(user.getId(), request.supplierId(), request.articleNumber());
 
-         if(existing.isPresent())
-         {
-             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                     "status", HttpStatus.CONFLICT.value(),
-                     "error", "This holder is already exists"
-             ));
-         }
+//         if(existing.isPresent())
+//         {
+//             return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+//                     "status", HttpStatus.CONFLICT.value(),
+//                     "error", "This holder is already exists"
+//             ));
+//         }
         if(request.name() == null || request.articleNumber() == null || request.link() == null
                 || request.marking() == null)
         {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { S_URL } from "./constants";
+
 export default function UserDashboard() {
   const [user, setUser] = useState(() => {
     const cached = localStorage.getItem("user");

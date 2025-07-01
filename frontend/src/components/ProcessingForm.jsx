@@ -162,7 +162,7 @@ export default function ProcessingForm() {
       .then((res) => {
         if (!res.ok) throw new Error();
         alert("✅ Атрибут додано!");
-        setIsRequired(false);
+        //setIsRequired(false);
         setMethodName("");
       })
       .catch(() => alert("❌ Помилка при додаванні атрибуту"));
@@ -359,7 +359,7 @@ export default function ProcessingForm() {
               <option value="">Оберіть станок</option>
               {machines.map((m) => (
                 <option key={m.id} value={m.id}>
-                  {m.inventoryNumber}
+                  {m.model}
                 </option>
               ))}
             </select>

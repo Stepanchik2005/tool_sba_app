@@ -1,5 +1,6 @@
 package com.example.demo.models.Set;
 
+import com.example.demo.models.TechnologicalSituation;
 import com.example.demo.models.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,4 +39,7 @@ public class SetEntity {
 
     @OneToMany(mappedBy = "set", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SetRating> ratings = new ArrayList<>();
+
+    @OneToOne(mappedBy = "set", cascade = CascadeType.ALL)
+    private TechnologicalSituation technologicalSituation;
 }

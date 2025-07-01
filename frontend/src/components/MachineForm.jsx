@@ -33,14 +33,19 @@ export default function MachineForm() {
         .then((res) => res.json())
         .then((data) => setAttributes(data.data || []))
         .catch(() => alert("❌ Не вдалося завантажити атрибути"));
-      fetch(`${S_URL}/api/machine/tool-holder/combinations`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-        .then((res) => res.json())
-        .then((data) => setHolderCombinations(data))
-        .catch(() => alert("❌ Не вдалося завантажити словник оправок"));
+      if (mode === "milling") {
+        fetch(`${S_URL}/api/machine/tool-holder/combinations`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log("🔍 Holder combinations:", data);
+            setHolderCombinations(data);
+          })
+          .catch(() => alert("❌ Не вдалося завантажити словник оправок"));
+      }
     }
   }, [mode]);
 
@@ -149,7 +154,7 @@ export default function MachineForm() {
   return (
     <div className="form">
       <h3>
-        {machineType === "LATHE" ? "Токарний станок" : "Фрезерний станок"}
+        {machineType === "LATHE" ? "Токарний верстат" : "Фрезерний верстат"}
       </h3>
 
       {!showAttrForm ? (

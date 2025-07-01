@@ -32,7 +32,7 @@ export default function MyMachines() {
 
   return (
     <div>
-      <h3>📜 Мої станки</h3>
+      <h3>📜 Мої верстати</h3>
       {machines.length === 0 && <p>Дані відсутні</p>}
       <ul style={{ padding: 0, listStyle: "none" }}>
         {machines.map((machine) => (
@@ -50,9 +50,8 @@ export default function MyMachines() {
               style={{ cursor: "pointer" }}
               onClick={() => toggleMachine(machine.id)}
             >
-              <strong>{machine.inventoryNumber}</strong> — №
-              {machine.workshopNumber}, {machine.model}, {machine.type},
-              {machine.chpkSystem}
+              <strong>{machine.model}</strong> — №{machine.workshopNumber},{" "}
+              {machine.model}, {machine.inventoryNumber},{machine.chpkSystem}
               <br />
             </div>
             {expandedMachineId === machine.id && (

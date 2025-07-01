@@ -46,18 +46,18 @@ public class InstrumentController {
         Supplier supplier = supplierRepository.findById(request.supplierId())
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
 
-        Optional<Instrument> existing = instrumentRepository
-                .findByUserIdAndSupplierIdAndArticleNumber(user.getId(), supplier.getId(), request.articleNumber());
+      //  Optional<Instrument> existing = instrumentRepository
+               // .findByUserIdAndSupplierIdAndArticleNumber(user.getId(), supplier.getId(), request.articleNumber());
 
         Material material = materialRepository.findById(request.materialId()).orElseThrow(() -> new RuntimeException("Material not found"));
 
 
-        if (existing.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                    "status", HttpStatus.CONFLICT.value(),
-                    "error", "This instrument already exists"
-            ));
-        }
+//        if (existing.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+//                    "status", HttpStatus.CONFLICT.value(),
+//                    "error", "This instrument already exists"
+//            ));
+//        }
 
         if (request.name() == null || request.articleNumber() == null || request.link() == null || request.marking() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
@@ -102,8 +102,7 @@ public class InstrumentController {
                 saved.getLink(),
                 saved.getInstrumentMaterial(),
                 supplierResponse,
-                brandName,
-                material.getBrand()
+                brandName
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(Map.of(

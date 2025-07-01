@@ -19,7 +19,8 @@ function SetForm() {
     link: "",
     supplierId: "",
     brandId: "",
-    material: "", // 👈 нове поле
+    instrumentMaterial: "",
+    materialId: "", // 👈 нове поле
   });
   const [adapter, setAdapter] = useState({
     name: "",
@@ -38,7 +39,7 @@ function SetForm() {
   });
   const [mode, setMode] = useState(""); // "view" або "statements"
   const [groupedStatements, setGroupedStatements] = useState({});
-
+  const [instrumentMaterial, setInstrumentMaterial] = useState("");
   const [brand, setBrand] = useState({ name: "" });
   const [allSuppliers, setAllSuppliers] = useState([]);
   const [allBrands, setAllBrands] = useState([]);
@@ -260,7 +261,7 @@ function SetForm() {
     ];
     if (
       !validate(toolHolder, requiredFields) ||
-      !validate(instrument, [...requiredFields, "material"]) // 👈 тут
+      !validate(instrument, [...requiredFields, "instrumentMaterial"]) // 👈 тут
     ) {
       alert("❌ Усі поля обов'язкові!");
       return;
@@ -271,9 +272,7 @@ function SetForm() {
       alert("❌ Не обрано матеріал або відсутній його ID.");
       return;
     }
-
     instrument.materialId = materialId;
-
     try {
       const thRes = await createEntity("/api/tool-holder/create", toolHolder);
       const iRes = await createEntity("/api/instrument/create", instrument);
@@ -442,9 +441,11 @@ function SetForm() {
           <label>
             Матеріал інструменту:{" "}
             <input
-              name="material"
-              value={data.material}
-              onChange={(e) => handleChange(e, setter, fieldName)}
+              name="instrumentMaterial"
+              value={data.instrumentMaterial}
+              onChange={(e) => {
+                handleChange(e, setter, fieldName);
+              }}
             />
           </label>
           <br />
@@ -474,7 +475,9 @@ function SetForm() {
         <select
           name="brandId"
           value={data.brandId}
-          onChange={(e) => handleChange(e, setter, fieldName)}
+          onChange={(e) => {
+            handleChange(e, setter, fieldName);
+          }}
         >
           <option value="" disabled hidden>
             -- Оберіть бренд --
@@ -739,6 +742,7 @@ function SetForm() {
                         setId={item.id}
                         initial={ratings[item.id] || 0}
                         onSubmit={async (id, value) => {
+                          console.log("RATING");
                           // сохрани на бэке
                           await fetch(`${S_URL}/api/set/${id}/rate`, {
                             method: "POST",

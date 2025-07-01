@@ -29,7 +29,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())// ✅ сучасний синтаксис
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/user/register", "/api/user/login","/api/auth/**").permitAll()
-                        .requestMatchers("/api/detail_attributes/create").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
          .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
@@ -47,7 +46,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(List.of(
                 "http://localhost:3005",
-                "http://100.113.68.44" // Tailscale IP фронта
+                "http://100.113.68.44",
+                "http://100.85.125.93"// Tailscale IP фронта
         )); // 🔥 Це обов'язково!
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));

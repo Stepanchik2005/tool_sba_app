@@ -185,7 +185,7 @@ export default function DetailForm() {
         setShapeInputForType("");
         setMode("main");
       })
-      .catch(() => alert("❌ Помилка при збереженні"));
+      .catch((err) => alert("❌ Помилка при збереженні " + err.message));
   };
 
   const handleAttrShapeSubmit = () => {

@@ -49,15 +49,15 @@ public class ToolAdapterController {
         Supplier supplier = supplierRepository.findById(request.supplierId())
                 .orElseThrow(() -> new RuntimeException("Supplier not found"));
 
-        Optional<ToolAdapter> existing = adapterRepository
-                .findByUserIdAndSupplierIdAndArticleNumber(user.getId(), supplier.getId(), request.articleNumber());
-
-        if (existing.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
-                    "status", HttpStatus.CONFLICT.value(),
-                    "error", "This adapter already exists"
-            ));
-        }
+//        Optional<ToolAdapter> existing = adapterRepository
+//                .findByUserIdAndSupplierIdAndArticleNumber(user.getId(), supplier.getId(), request.articleNumber());
+//
+//        if (existing.isPresent()) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+//                    "status", HttpStatus.CONFLICT.value(),
+//                    "error", "This adapter already exists"
+//            ));
+//        }
 
         if (request.name() == null || request.articleNumber() == null || request.link() == null || request.marking() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(

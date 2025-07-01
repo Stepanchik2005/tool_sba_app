@@ -6,19 +6,18 @@ import com.example.demo.Selenium.SiteStrategyFactory;
 import com.example.demo.dto.TechnologicalSolutionRequest;
 import com.example.demo.dto.TechnologicalSolutionResponse;
 import com.example.demo.dto.set.*;
-import com.example.demo.models.Material;
 import com.example.demo.models.Set.*;
-import com.example.demo.models.TechnologicalSituation;
 import com.example.demo.models.TechnologicalSolution;
 import com.example.demo.models.User;
 import com.example.demo.repositories.*;
 import com.example.demo.repositories.Details.DetailRepository;
 import com.example.demo.repositories.Machines.MachineRepository;
 import com.example.demo.repositories.Set.SetRepository;
+import com.example.demo.services.SuggestedSetsService;
 import lombok.RequiredArgsConstructor;
+import org.openqa.selenium.NotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -27,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/technological-solution")
@@ -42,6 +40,7 @@ public class TechnologicalSolutionController {
     private final SetRepository setRepo;
     private final TechnologicalSolutionRepository techSolRepo;
 
+    private final SuggestedSetsService setsService;
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody TechnologicalSolutionRequest request, Authentication auth) {
         User user = userRepo.findByUsername(auth.getName())
@@ -85,90 +84,24 @@ public class TechnologicalSolutionController {
                                                                                          @RequestParam Long processingMethodId,
                                                                                          @RequestParam Long materialId)
     {
-        Pageable top3 = PageRequest.of(0, 3);
-        List<TechnologicalSolution> top3Situation = techSolRepo.findTopSituations(processingMethodId, processingTypeId, materialId, top3);
-        if (top3Situation.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
-                            "status", HttpStatus.NOT_FOUND.value(),
-                            "error", "Not found"
-                            ));
-        }
-
-        List<SuggestedSetsResponse> responses = top3Situation.stream().map(m -> {
-            SuggestedSetsResponse response = toSuggestedSetRepsonse(m.getSet());
-            return response;
-        }).toList();
-
-
-        return ResponseEntity.status(HttpStatus.OK).body(Map.of(
-                "status", HttpStatus.OK.value(),
-                "message", "Successfully getting",
-                "data", responses
-        ));
-    }
-
-    private ProductInfo findPriceAndAvailability(SetObject obj) {
-        SiteStrategyFactory factory = new SiteStrategyFactory();
-        SiteStrategy strategy = factory.resolveStrategy(obj.getLink());
-        ProductInfo holderFetch;
-        try {
-            holderFetch = strategy.fetch(obj.getLink(), obj.getArticleNumber());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return holderFetch;
-    }
-
-    private <T extends SetObjectResponse> T setResponse(T response, SetObject obj, WebsiteData websiteData)
-    {
-        Supplier supplier = obj.getSupplier();
-        SupplierResponse supplierResponse = new SupplierResponse(supplier.getId(), supplier.getEmail(),
-                supplier.getName(), supplier.getMobile(), supplier.getEdpou(), supplier.getAddress());
-
-        response.setId(obj.getId());
-        response.setName(obj.getName());
-        response.setMarking(obj.getMarking());
-        response.setArticleNumber(obj.getArticleNumber());
-        response.setLink(obj.getLink());
-        response.setSupplier(supplierResponse);
-        response.setBrandName(obj.getBrand().getName());
-        response.setWebsiteData(websiteData);
-        return response;
-    }
-    private WebsiteData createWebsiteData(ProductInfo info)
-    {
-        return new WebsiteData(info.price(),info.isAvailable());
-    }
-    private SuggestedSetsResponse toSuggestedSetRepsonse(SetEntity set)
-    {
-        ToolHolder holder = set.getToolHolder();
-        Instrument instrument = set.getInstrument();
-        ToolAdapter toolAdapter = (set.getToolAdapter() != null) ? set.getToolAdapter() : null;
-
-        ProductInfo holderInfo = findPriceAndAvailability(holder);
-        ProductInfo instrumentInfo = findPriceAndAvailability(instrument);
-        ProductInfo adapterInfo = toolAdapter != null ? findPriceAndAvailability(toolAdapter) : null;
-
-        ToolAdapterResponse toolAdapterResponse = null;
-        WebsiteData websiteHolderData = createWebsiteData(holderInfo);
-        WebsiteData websiteInstrumentData = createWebsiteData(instrumentInfo);
-        WebsiteData websiteAdapterData = adapterInfo != null ? createWebsiteData(adapterInfo) : null;
-
-
-        ToolHolderResponse holderResponse = setResponse(new ToolHolderResponse(), holder, websiteHolderData);
-        InstrumentResponse instrumentResponse = setResponse(new InstrumentResponse(), instrument, websiteInstrumentData);
-        if(toolAdapter != null && websiteAdapterData != null)
+        try{
+            List<SetResponse> responses = setsService.getSetByProcessingTypeIdAndProcessingMethodIdAndMaterialId(processingTypeId, processingMethodId, materialId);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+                    "status", HttpStatus.OK.value(),
+                    "message", "Successfully getting",
+                    "data", responses
+            ));
+        } catch (Exception ex)
         {
-            toolAdapterResponse = setResponse(new ToolAdapterResponse(), toolAdapter, websiteAdapterData);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of(
+                    "status", HttpStatus.NOT_FOUND.value(),
+                    "error", "Not found"
+            ));
         }
 
-        SuggestedSetsResponse response = new SuggestedSetsResponse(
-                holderResponse,
-                instrumentResponse,
-                toolAdapterResponse // може бути null — і це ок
-        );
-
-        return response;
     }
+
+
+
+
 }

@@ -17,7 +17,12 @@ export default function MyDetails() {
   const [groupedStatements, setGroupedStatements] = useState({});
   const navigate = useNavigate(); // ініціалізація
   useEffect(() => {
-    if (mode !== "myDetails" || technologicalSituations.length === 0) return;
+    if (
+      mode !== "myDetails" ||
+      !technologicalSituations ||
+      !technologicalSituations.length
+    )
+      return;
 
     const requests = technologicalSituations.map((situation) => {
       const processingTypeId = situation.processingTypeNode?.id;
@@ -52,7 +57,17 @@ export default function MyDetails() {
 
     Promise.all(requests)
       .then((results) => {
+        const hasAnySets = results.some(
+          (r) => Array.isArray(r.sets) && r.sets.length > 0
+        );
+        if (!hasAnySets) {
+          console.info(
+            "📭 Немає жодного запропонованого комплекту — мапінг пропущено."
+          );
+          return;
+        }
         const mapped = {};
+
         results.forEach((r) => {
           if (r?.situationId) {
             mapped[r.situationId] = r.sets;
@@ -63,6 +78,7 @@ export default function MyDetails() {
       .finally(() => setIsLoading(false));
   }, [mode, technologicalSituations]);
   useEffect(() => {
+    if (mode != "myDetails") return;
     const cached = localStorage.getItem("userDetailHistory");
     if (cached) {
       setDetails(JSON.parse(cached));
@@ -80,7 +96,7 @@ export default function MyDetails() {
         localStorage.setItem("userDetailHistory", JSON.stringify(data.data));
       })
       .catch(() => alert("❌ Не вдалося завантажити історію деталей"));
-  }, []);
+  }, [mode]);
   const hasAnySelected = Object.values(selectedSetItems).some((situation) =>
     Object.values(situation).some((set) =>
       Object.values(set).some((v) => v === true)
@@ -192,11 +208,11 @@ export default function MyDetails() {
         </div>
       )} */}
 
-      {/* <div>
+      <div>
         <strong>Постачальник:</strong> {data.supplier.name}
       </div>
 
-      <div>
+      {/* <div>
         <strong>Бренд:</strong> {data.brandName}
       </div> */}
 
@@ -258,329 +274,345 @@ export default function MyDetails() {
                 </div>
               ) : (
                 <>
-                  <table
-                    border="1"
-                    style={{
-                      tableLayout: "fixed",
-                      width: "100%",
-                      borderCollapse: "collapse",
-                      textAlign: "center",
-                      overflow: "scroll",
-                      tableLayout: "fixed",
-                    }}
-                  >
-                    <colgroup>
-                      <col style={{ width: "40px" }} /> {/* № */}
-                      <col style={{ width: "60px" }} />{" "}
-                      {/* Тип обробки (картинка) */}
-                      <col style={{ width: "80px" }} /> {/* Метод обробки */}
-                      <col style={{ width: "150px" }} /> {/* Атрибути */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Технічне рішення — Державка */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Технічне рішення — Інструмент */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Технічне рішення — Адаптер */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Постачальник №1 — Державка */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Постачальник №1 — Інструмент */}
-                      <col style={{ width: "120px" }} />{" "}
-                      {/* Постачальник №1 — Адаптер */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Постачальник №2 — Державка */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Постачальник №2 — Інструмент */}
-                      <col style={{ width: "120px" }} />{" "}
-                      {/* Постачальник №2 — Адаптер */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Постачальник №3 — Державка */}
-                      <col style={{ width: "150px" }} />{" "}
-                      {/* Постачальник №3 — Інструмент */}
-                      <col style={{ width: "120px" }} />{" "}
-                      {/* Постачальник №3 — Адаптер */}
-                    </colgroup>
-                    <thead>
-                      <tr>
-                        <th className="sets" rowSpan={2}>
-                          №
-                        </th>
-                        <th className="sets" rowSpan={2} colSpan={3}>
-                          Технологічна ситуація
-                        </th>
-                        <th className="sets" colSpan={3}>
-                          Технічне рішення
-                        </th>
-                        <th className="sets" colSpan={3}>
-                          Постачальник №1
-                        </th>
-                        <th className="sets" colSpan={3}>
-                          Постачальник №2
-                        </th>
-                        <th className="sets" colSpan={3}>
-                          Постачальник №3
-                        </th>
-                      </tr>
-                      <tr>
-                        <th className="sets">Оправка</th>
-                        <th className="sets">Інструмент</th>
-                        <th className="sets">Адаптер</th>
-                        <th className="sets">Оправка</th>
-                        <th className="sets">Інструмент</th>
-                        <th className="sets">Адаптер</th>
-                        <th className="sets">Оправка</th>
-                        <th className="sets">Інструмент</th>
-                        <th className="sets">Адаптер</th>
-                        <th className="sets">Оправка</th>
-                        <th className="sets">Інструмент</th>
-                        <th className="sets">Адаптер</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {technologicalSituations.map((situation, idx) => {
-                        const sets = suggestedSets[situation.id] || [];
-                        const ourSet = userSets[situation.id] || [];
+                  <div style={{ overflowX: "auto" }}>
+                    <table
+                      border="1"
+                      style={{
+                        tableLayout: "fixed",
+                        width: "100%",
+                        borderCollapse: "collapse",
+                        textAlign: "center",
+                        overflowX: "scroll",
+                      }}
+                    >
+                      <colgroup>
+                        <col style={{ width: "40px" }} /> {/* № */}
+                        <col style={{ width: "60px" }} />{" "}
+                        {/* Тип обробки (картинка) */}
+                        <col style={{ width: "80px" }} /> {/* Метод обробки */}
+                        <col style={{ width: "150px" }} /> {/* Атрибути */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Технічне рішення — Державка */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Технічне рішення — Інструмент */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Технічне рішення — Адаптер */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Постачальник №1 — Державка */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Постачальник №1 — Інструмент */}
+                        <col style={{ width: "120px" }} />{" "}
+                        {/* Постачальник №1 — Адаптер */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Постачальник №2 — Державка */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Постачальник №2 — Інструмент */}
+                        <col style={{ width: "120px" }} />{" "}
+                        {/* Постачальник №2 — Адаптер */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Постачальник №3 — Державка */}
+                        <col style={{ width: "150px" }} />{" "}
+                        {/* Постачальник №3 — Інструмент */}
+                        <col style={{ width: "120px" }} />{" "}
+                        {/* Постачальник №3 — Адаптер */}
+                      </colgroup>
+                      <thead>
+                        <tr>
+                          <th className="sets" rowSpan={2}>
+                            №
+                          </th>
+                          <th className="sets" rowSpan={2} colSpan={3}>
+                            Технологічна ситуація
+                          </th>
+                          <th className="sets" colSpan={3}>
+                            Технічне рішення
+                          </th>
+                          <th className="sets" colSpan={3}>
+                            Постачальник №1
+                          </th>
+                          <th className="sets" colSpan={3}>
+                            Постачальник №2
+                          </th>
+                          <th className="sets" colSpan={3}>
+                            Постачальник №3
+                          </th>
+                        </tr>
+                        <tr>
+                          <th className="sets">Оправка</th>
+                          <th className="sets">Інструмент</th>
+                          <th className="sets">Адаптер</th>
+                          <th className="sets">Оправка</th>
+                          <th className="sets">Інструмент</th>
+                          <th className="sets">Адаптер</th>
+                          <th className="sets">Оправка</th>
+                          <th className="sets">Інструмент</th>
+                          <th className="sets">Адаптер</th>
+                          <th className="sets">Оправка</th>
+                          <th className="sets">Інструмент</th>
+                          <th className="sets">Адаптер</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {technologicalSituations.map((situation, idx) => {
+                          const sets = suggestedSets[situation.id] || [];
+                          const ourSet = userSets[situation.id] || [];
 
-                        return (
-                          <tr key={situation.id} className="sets">
-                            {/* № */}
-                            <td>{idx + 1}</td>
+                          return (
+                            <tr key={situation.id} className="sets">
+                              {/* № */}
+                              <td>{idx + 1}</td>
 
-                            {/* Тип обробки */}
-                            <td
-                              className="sets"
-                              style={{
-                                paddingLeft: "0",
-                                paddingRight: "0",
-                              }}
-                            >
-                              <img
-                                src={situation.processingTypeNode.url}
-                                alt="Тип"
-                                style={{ maxWidth: "50px" }}
-                              />
-                            </td>
+                              {/* Тип обробки */}
+                              <td
+                                className="sets"
+                                style={{
+                                  paddingLeft: "0",
+                                  paddingRight: "0",
+                                }}
+                              >
+                                <img
+                                  src={situation.processingTypeNode.url}
+                                  alt="Тип"
+                                  style={{ maxWidth: "50px" }}
+                                />
+                              </td>
 
-                            {/* Метод обробки */}
-                            <td className="sets">
-                              {situation.processingMethod.name}
-                            </td>
+                              {/* Метод обробки */}
+                              <td className="sets">
+                                {situation.processingMethod.name}
+                              </td>
 
-                            {/* Атрибути */}
-                            <td
-                              className="sets"
-                              style={{
-                                background: "#f7f7f7",
-                                textAlign: "left",
-                              }}
-                            >
-                              <strong>Атрибути:</strong>{" "}
-                              {situation.attributes?.length ? (
-                                situation.attributes.map((attr, j) => (
-                                  <div style={{ marginBottom: "2px" }}>
-                                    {attr.name}: <strong>{attr.value}</strong>{" "}
-                                    {attr.unit}
+                              {/* Атрибути */}
+                              <td
+                                className="sets"
+                                style={{
+                                  background: "#f7f7f7",
+                                  textAlign: "left",
+                                }}
+                              >
+                                <strong>Атрибути:</strong>{" "}
+                                {situation.attributes?.length ? (
+                                  situation.attributes.map((attr, j) => (
+                                    <div style={{ marginBottom: "2px" }}>
+                                      {attr.name}: <strong>{attr.value}</strong>{" "}
+                                      {attr.unit}
+                                    </div>
+                                  ))
+                                ) : (
+                                  <em>Немає атрибутів</em>
+                                )}
+                              </td>
+
+                              {/* Теперь справа идет 1 комплект: который делал сам юзер */}
+
+                              {/* Державка */}
+                              <td className="sets">
+                                {ourSet?.toolHolder ? (
+                                  <div
+                                    style={{ display: "flex", gap: "0.5rem" }}
+                                  >
+                                    {renderSetPreview(
+                                      "Державка",
+                                      ourSet.toolHolder
+                                    )}
+                                    <input
+                                      type="checkbox"
+                                      checked={
+                                        selectedSetItems[situation.id]?.[
+                                          USER_SET_INDEX
+                                        ]?.toolHolder
+                                      }
+                                      onChange={() =>
+                                        toggleSetItemSelection(
+                                          situation.id,
+                                          USER_SET_INDEX,
+                                          "toolHolder"
+                                        )
+                                      }
+                                      style={{ accentColor: "green" }}
+                                    />
                                   </div>
-                                ))
-                              ) : (
-                                <em>Немає атрибутів</em>
-                              )}
-                            </td>
+                                ) : (
+                                  "-"
+                                )}
+                              </td>
 
-                            {/* Теперь справа идет 1 комплект: который делал сам юзер */}
+                              {/* Інструмент */}
+                              <td className="sets">
+                                {ourSet?.instrument ? (
+                                  <div
+                                    style={{ display: "flex", gap: "0.5rem" }}
+                                  >
+                                    {renderSetPreview(
+                                      "Інструмент",
+                                      ourSet.instrument
+                                    )}
+                                    <input
+                                      type="checkbox"
+                                      checked={
+                                        selectedSetItems[situation.id]?.[
+                                          USER_SET_INDEX
+                                        ]?.instrument || false
+                                      }
+                                      onChange={() =>
+                                        toggleSetItemSelection(
+                                          situation.id,
+                                          USER_SET_INDEX,
+                                          "instrument"
+                                        )
+                                      }
+                                      style={{ accentColor: "green" }}
+                                    />
+                                  </div>
+                                ) : (
+                                  "-"
+                                )}
+                              </td>
 
-                            {/* Державка */}
-                            <td className="sets">
-                              {ourSet?.toolHolder ? (
-                                <div style={{ display: "flex", gap: "0.5rem" }}>
-                                  {renderSetPreview(
-                                    "Державка",
-                                    ourSet.toolHolder
-                                  )}
-                                  <input
-                                    type="checkbox"
-                                    checked={
-                                      selectedSetItems[situation.id]?.[
-                                        USER_SET_INDEX
-                                      ]?.toolHolder
-                                    }
-                                    onChange={() =>
-                                      toggleSetItemSelection(
-                                        situation.id,
-                                        USER_SET_INDEX,
-                                        "toolHolder"
-                                      )
-                                    }
-                                    style={{ accentColor: "green" }}
-                                  />
-                                </div>
-                              ) : (
-                                "-"
-                              )}
-                            </td>
+                              {/* Адаптер */}
+                              <td className="sets">
+                                {ourSet?.toolAdapter ? (
+                                  <div
+                                    style={{ display: "flex", gap: "0.5rem" }}
+                                  >
+                                    {renderSetPreview(
+                                      "Адаптер",
+                                      ourSet.toolAdapter
+                                    )}
+                                    <input
+                                      type="checkbox"
+                                      checked={
+                                        selectedSetItems[situation.id]?.[
+                                          USER_SET_INDEX
+                                        ]?.toolAdapter || false
+                                      }
+                                      onChange={() =>
+                                        toggleSetItemSelection(
+                                          situation.id,
+                                          USER_SET_INDEX,
+                                          "toolAdapter"
+                                        )
+                                      }
+                                      style={{ accentColor: "green" }}
+                                    />
+                                  </div>
+                                ) : (
+                                  "-"
+                                )}
+                              </td>
 
-                            {/* Інструмент */}
-                            <td className="sets">
-                              {ourSet?.instrument ? (
-                                <div style={{ display: "flex", gap: "0.5rem" }}>
-                                  {renderSetPreview(
-                                    "Інструмент",
-                                    ourSet.instrument
-                                  )}
-                                  <input
-                                    type="checkbox"
-                                    checked={
-                                      selectedSetItems[situation.id]?.[
-                                        USER_SET_INDEX
-                                      ]?.instrument || false
-                                    }
-                                    onChange={() =>
-                                      toggleSetItemSelection(
-                                        situation.id,
-                                        USER_SET_INDEX,
-                                        "instrument"
-                                      )
-                                    }
-                                    style={{ accentColor: "green" }}
-                                  />
-                                </div>
-                              ) : (
-                                "-"
-                              )}
-                            </td>
+                              {/* Теперь справа идут 3 комплекти: по 3 елемента каждый */}
+                              {sets.slice(0, 3).map((item, i) => (
+                                <>
+                                  {/* Державка */}
+                                  <td key={`holder-${i}`} className="sets">
+                                    {item?.toolHolder ? (
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          gap: "0.5rem",
+                                        }}
+                                      >
+                                        {renderSetPreview(
+                                          "Державка",
+                                          item.toolHolder
+                                        )}
+                                        <input
+                                          type="checkbox"
+                                          checked={
+                                            selectedSetItems[situation.id]?.[i]
+                                              ?.toolHolder || false
+                                          }
+                                          onChange={() =>
+                                            toggleSetItemSelection(
+                                              situation.id,
+                                              i,
+                                              "toolHolder"
+                                            )
+                                          }
+                                          style={{ accentColor: "green" }}
+                                        />
+                                      </div>
+                                    ) : (
+                                      "-"
+                                    )}
+                                  </td>
 
-                            {/* Адаптер */}
-                            <td className="sets">
-                              {ourSet?.toolAdapter ? (
-                                <div style={{ display: "flex", gap: "0.5rem" }}>
-                                  {renderSetPreview(
-                                    "Адаптер",
-                                    ourSet.toolAdapter
-                                  )}
-                                  <input
-                                    type="checkbox"
-                                    checked={
-                                      selectedSetItems[situation.id]?.[
-                                        USER_SET_INDEX
-                                      ]?.toolAdapter || false
-                                    }
-                                    onChange={() =>
-                                      toggleSetItemSelection(
-                                        situation.id,
-                                        USER_SET_INDEX,
-                                        "toolAdapter"
-                                      )
-                                    }
-                                    style={{ accentColor: "green" }}
-                                  />
-                                </div>
-                              ) : (
-                                "-"
-                              )}
-                            </td>
+                                  {/* Інструмент */}
+                                  <td key={`instr-${i}`} className="sets">
+                                    {item?.instrument ? (
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          gap: "0.5rem",
+                                        }}
+                                      >
+                                        {renderSetPreview(
+                                          "Інструмент",
+                                          item.instrument
+                                        )}
+                                        <input
+                                          type="checkbox"
+                                          checked={
+                                            selectedSetItems[situation.id]?.[i]
+                                              ?.instrument || false
+                                          }
+                                          onChange={() =>
+                                            toggleSetItemSelection(
+                                              situation.id,
+                                              i,
+                                              "instrument"
+                                            )
+                                          }
+                                          style={{ accentColor: "green" }}
+                                        />
+                                      </div>
+                                    ) : (
+                                      "-"
+                                    )}
+                                  </td>
 
-                            {/* Теперь справа идут 3 комплекти: по 3 елемента каждый */}
-                            {sets.slice(0, 3).map((item, i) => (
-                              <>
-                                {/* Державка */}
-                                <td key={`holder-${i}`} className="sets">
-                                  {item?.toolHolder ? (
-                                    <div
-                                      style={{ display: "flex", gap: "0.5rem" }}
-                                    >
-                                      {renderSetPreview(
-                                        "Державка",
-                                        item.toolHolder
-                                      )}
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          selectedSetItems[situation.id]?.[i]
-                                            ?.toolHolder || false
-                                        }
-                                        onChange={() =>
-                                          toggleSetItemSelection(
-                                            situation.id,
-                                            i,
-                                            "toolHolder"
-                                          )
-                                        }
-                                        style={{ accentColor: "green" }}
-                                      />
-                                    </div>
-                                  ) : (
-                                    "-"
-                                  )}
-                                </td>
-
-                                {/* Інструмент */}
-                                <td key={`instr-${i}`} className="sets">
-                                  {item?.instrument ? (
-                                    <div
-                                      style={{ display: "flex", gap: "0.5rem" }}
-                                    >
-                                      {renderSetPreview(
-                                        "Інструмент",
-                                        item.instrument
-                                      )}
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          selectedSetItems[situation.id]?.[i]
-                                            ?.instrument || false
-                                        }
-                                        onChange={() =>
-                                          toggleSetItemSelection(
-                                            situation.id,
-                                            i,
-                                            "instrument"
-                                          )
-                                        }
-                                        style={{ accentColor: "green" }}
-                                      />
-                                    </div>
-                                  ) : (
-                                    "-"
-                                  )}
-                                </td>
-
-                                {/* Адаптер */}
-                                <td key={`adapter-${i}`} className="sets">
-                                  {item?.toolAdapter ? (
-                                    <div
-                                      style={{ display: "flex", gap: "0.5rem" }}
-                                    >
-                                      {renderSetPreview(
-                                        "Адаптер",
-                                        item.toolAdapter
-                                      )}
-                                      <input
-                                        type="checkbox"
-                                        checked={
-                                          selectedSetItems[situation.id]?.[i]
-                                            ?.toolAdapter || false
-                                        }
-                                        onChange={() =>
-                                          toggleSetItemSelection(
-                                            situation.id,
-                                            i,
-                                            "toolAdapter"
-                                          )
-                                        }
-                                        style={{ accentColor: "green" }}
-                                      />
-                                    </div>
-                                  ) : (
-                                    "-"
-                                  )}
-                                </td>
-                              </>
-                            ))}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
+                                  {/* Адаптер */}
+                                  <td key={`adapter-${i}`} className="sets">
+                                    {item?.toolAdapter ? (
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          gap: "0.5rem",
+                                        }}
+                                      >
+                                        {renderSetPreview(
+                                          "Адаптер",
+                                          item.toolAdapter
+                                        )}
+                                        <input
+                                          type="checkbox"
+                                          checked={
+                                            selectedSetItems[situation.id]?.[i]
+                                              ?.toolAdapter || false
+                                          }
+                                          onChange={() =>
+                                            toggleSetItemSelection(
+                                              situation.id,
+                                              i,
+                                              "toolAdapter"
+                                            )
+                                          }
+                                          style={{ accentColor: "green" }}
+                                        />
+                                      </div>
+                                    ) : (
+                                      "-"
+                                    )}
+                                  </td>
+                                </>
+                              ))}
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
                   {/* 📄 Кнопка для створення відомостей */}
                   <button
                     onClick={handleCreateStatements}
